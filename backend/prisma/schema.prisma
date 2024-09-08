@@ -12,3 +12,24 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+
+model Student{
+  id Int @id @default(autoincrement())
+  name String
+  currentQualifications String
+  email String @unique
+  gender String
+  password String
+  studentDetails StudentSchoolDetails[]
+}
+
+
+model StudentSchoolDetails{
+  id Int @id @default(autoincrement())
+  emailId String
+  student Student @relation(fields: [emailId],references: [email],onDelete:Cascade)
+  schoolname String
+  grade String
+  annualScore String
+}
