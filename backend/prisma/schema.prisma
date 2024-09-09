@@ -1,8 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
   provider = "prisma-client-js"
@@ -21,15 +17,122 @@ model Student{
   email String @unique
   gender String
   password String
-  studentDetails StudentSchoolDetails[]
+  annualIncome Int?
+  dob String
+  bonafide String?
+  incomecertificate String?
+  salaryslip String?
+  achievements String[]
+  secondarystudentDetails SecondaryStudentDetails[]
+  hscstudentdetails HSCStudentDetails[]
+  ugcollegestudentdetails UGCollegeStudentDetails[]
+  pgcollegestudentdetails  PGCollegeStudentDetails[]
+  
+
 }
 
 
-model StudentSchoolDetails{
+model SecondaryStudentDetails{
   id Int @id @default(autoincrement())
   emailId String
   student Student @relation(fields: [emailId],references: [email],onDelete:Cascade)
   schoolname String
-  grade String
+  schoollocation String
+  score  Float
   annualScore String
+  annualcard String?
+  grade Int
+
 }
+
+
+model HSCStudentDetails{
+  id Int @id @default(autoincrement())
+  emailId String
+  student Student @relation(fields: [emailId],references: [email],onDelete:Cascade)
+  schoolname String
+  schoollocation String
+  sscgrade Float
+  sscmarksheet String
+
+
+}
+
+
+model UGCollegeStudentDetails{
+  id Int @id @default(autoincrement())
+  emailId String
+  student Student @relation(fields: [emailId],references: [email],onDelete:Cascade)
+  degree String
+  discipline String
+  collegename String
+  collegelocation String
+  sscgrade Float
+  sscmarksheet String
+  hscgrade Float
+  hscmarksheet String 
+  gpa Float
+  styear Int
+  endyear Int
+
+
+}
+
+
+model PGCollegeStudentDetails{
+  id Int @id @default(autoincrement())
+  emailId String
+  student Student @relation(fields: [emailId],references: [email],onDelete:Cascade)
+  degree String
+  discipline String
+  collegename String
+  collegelocation String
+  ugcgpa Float
+  degreecertificate String
+  styear Int
+  endyear Int
+
+}
+
+
+model Admin{
+  id Int @id @default(autoincrement())
+  email String @unique
+  password String
+  orgname String
+  orglocation String
+  contactno String
+  yearsofservice Int?
+  certificate String
+  description String
+  scholarship Scholarship[]
+}
+
+model Scholarship{
+  id Int @id @default(autoincrement())
+  name String
+  providedby Int
+  admin Admin @relation(fields: [providedby],references: [id],onDelete: Cascade)
+  for String[]
+  likes Int
+  amt Int
+  
+
+
+
+
+
+}
+
+
+// enum For{
+//   SecondaryStudent
+//   HSCStudent
+//   UGStudent
+//   PGStudent
+
+// }
+
+
+
+// eligbility : gender , community , education , income , 
