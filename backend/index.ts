@@ -4,6 +4,8 @@ import cors from "cors"
 // import { adminRouter } from "./routes/adminRoute";
 // import { pollRouter } from "./routes/pollRoute";
 import { PrismaClient } from "@prisma/client";
+import { studentRouter } from "./routes/studentRouter";
+import { adminRouter } from "./routes/adminRouter";
 
 
 
@@ -24,7 +26,7 @@ app.listen(BACKEND_PORT,()=>{
     console.log("Running")
 })
 
-app.use("/api/user",studentRouter)
+app.use("/api/student",studentRouter)
 app.use("/api/admin",adminRouter)
 
 

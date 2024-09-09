@@ -9,24 +9,33 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Student{
   id Int @id @default(autoincrement())
   name String
-  currentQualifications String
   email String @unique
-  gender String
   password String
+  studentdetails StudentDetails[]
+  secondarystudentDetails SecondaryStudentDetails[]
+  hscstudentdetails HSCStudentDetails[]
+  ugcollegestudentdetails UGCollegeStudentDetails[]
+  pgcollegestudentdetails  PGCollegeStudentDetails[]
+
+}
+
+
+model StudentDetails{
+  id Int @id @default(autoincrement())
+  studemail String 
+  student Student @relation(fields: [studemail],references: [email],onDelete: Cascade)
+  currentQualifications String
+  gender String
   annualIncome Int?
   dob String
   bonafide String?
   incomecertificate String?
   salaryslip String?
   achievements String[]
-  secondarystudentDetails SecondaryStudentDetails[]
-  hscstudentdetails HSCStudentDetails[]
-  ugcollegestudentdetails UGCollegeStudentDetails[]
-  pgcollegestudentdetails  PGCollegeStudentDetails[]
+  
   
 
 }
@@ -116,14 +125,12 @@ model Scholarship{
   for String[]
   likes Int
   amt Int
-  
-
-
-
-
+  regstdate String
+  regenddate String
 
 }
 
+// ["female","any","enginerr","any"]
 
 // enum For{
 //   SecondaryStudent

@@ -2,6 +2,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { ScholarshipHome } from './pages/scholarship-home'
 import { Scholarships } from './pages/scholarships'
 import './App.css'
+import { StudentRegister } from './pages/studentRegister'
+import { StudLogin } from './pages/studentLogin'
 
 function App() {
   
@@ -10,8 +12,10 @@ function App() {
     <>
      <BrowserRouter>
         <Routes>
-          <Route path="/scholarshiphome" element={< ScholarshipHome />}></Route>
-          <Route path="/scholarships" element={< Scholarships/>}></Route>
+          <Route path="/student/register" element={< StudentRegister />}></Route>
+          <Route path="/student/login" element={< StudLogin />}></Route>
+          <Route path="/student/scholarshiphome" element={< ScholarshipHome />}></Route>
+          <Route path="/student/scholarships" element={< Scholarships/>}></Route>
           
         </Routes>
       
