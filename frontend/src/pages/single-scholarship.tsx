@@ -115,14 +115,14 @@ export function SingleScholarship() {
             <Separator className="my-6" />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Coverage Details</h3>
-                <ul className="list-disc list-inside text-gray-700">
-                  {scholarship.coverageDetails.map((detail, index) => (
-                    <li key={index}>{detail}</li>
-                  ))}
-                </ul>
-              </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Application Process</h3>
+              <ol className="list-decimal list-inside text-gray-700">
+                {scholarship.applicationProcess.map((step, index) => (
+                  <li key={index}>{step}</li>
+                ))}
+              </ol>
+            </div>
               <div>
                 <h3 className="text-lg font-semibold mb-2">Eligibility Criteria</h3>
                 <ul className="list-disc list-inside text-gray-700">
@@ -135,14 +135,7 @@ export function SingleScholarship() {
 
             <Separator className="my-6" />
 
-            {/* <div>
-              <h3 className="text-lg font-semibold mb-2">Application Process</h3>
-              <ol className="list-decimal list-inside text-gray-700">
-                {scholarship.applicationProcess.map((step, index) => (
-                  <li key={index}>{step}</li>
-                ))}
-              </ol>
-            </div> */}
+         
 
             <div className="mt-8 flex justify-center">
               <Button 
