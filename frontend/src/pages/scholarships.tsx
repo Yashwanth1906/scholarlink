@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { GraduationCap, Search, LogIn, Menu, Filter } from 'lucide-react'
-import {Link, useNavigate} from "react-router-dom"
+import { GraduationCap, Search, LogIn, Menu,  } from 'lucide-react'
+import {Link, } from "react-router-dom"
 
 const scholarships = [
   {

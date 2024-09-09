@@ -18,6 +18,7 @@ function App() {
           <Route path="/student/login" element={< StudLogin />}></Route>
           <Route path="/student/scholarshiphome" element={< ScholarshipHome />}></Route>
           <Route path="/student/scholarships" element={< Scholarships/>}></Route>
+          <Route path="/student/information" element={<StudentInformation />}></Route>
           
         </Routes>
       

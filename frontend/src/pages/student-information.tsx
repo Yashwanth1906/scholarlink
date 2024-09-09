@@ -8,14 +8,16 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
-import { GraduationCap, User, Mail, Calendar, MapPin, Upload, FileText, DollarSign } from 'lucide-react'
+import { GraduationCap, User, Calendar, MapPin, Upload, FileText, DollarSign, Menu, Plus, X } from 'lucide-react'
 import {Link, useNavigate} from "react-router-dom"
+import axios from 'axios'
+import { BACKEND_URL } from '../../config'
 
-export function StudentInformation() {
+export  function StudentInformation() {
   const [studentType, setStudentType] = useState('Secondary')
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
+    gender: '',
     dob: '',
     annualIncome: '',
     schoolName: '',
@@ -36,6 +38,7 @@ export function StudentInformation() {
     startYear: '',
     endYear: ''
   })
+  const [achievements, setAchievements] = useState<string[]>([''])
   const [documents, setDocuments] = useState({
     annualCard: null,
     sscMarksheet: null,
@@ -46,7 +49,24 @@ export function StudentInformation() {
     bonafide: null
   })
 
-  const handleInputChange = (e:any) => {
+  const format = (date: string): string => {
+
+    const [year, month, day] = date.split('-').map(Number);
+
+    const dateObj = new Date(Date.UTC(year, month - 1, day));
+  
+    const formattedDay = String(dateObj.getUTCDate()).padStart(2, '0');
+    const formattedMonth = String(dateObj.getUTCMonth() + 1).padStart(2, '0');
+    const formattedYear = dateObj.getUTCFullYear();
+  
+    const formattedDate = `${formattedDay}/${formattedMonth}/${formattedYear}`;
+  
+    console.log(formattedDate);
+    return formattedDate;
+  }
+  
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData(prevData => ({
       ...prevData,
@@ -54,12 +74,36 @@ export function StudentInformation() {
     }))
   }
 
-  const handleFileChange = (e:any, documentName:any) => {
-    const file = e.target.files[0]
-    setDocuments(prevDocs => ({
-      ...prevDocs,
-      [documentName]: file
+  const handleGenderChange = (value: string) => {
+    setFormData(prevData => ({
+      ...prevData,
+      gender: value
     }))
+  }
+
+  const handleAchievementChange = (index: number, value: string) => {
+    const newAchievements = [...achievements]
+    newAchievements[index] = value
+    setAchievements(newAchievements)
+  }
+
+  const handleAddAchievement = () => {
+    setAchievements([...achievements, ''])
+  }
+
+  const handleRemoveAchievement = (index: number) => {
+    const newAchievements = achievements.filter((_, i) => i !== index)
+    setAchievements(newAchievements.length ? newAchievements : [''])
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, documentName: string) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setDocuments(prevDocs => ({
+        ...prevDocs,
+        [documentName]: file
+      }))
+    }
   }
 
   const renderEducationFields = () => {
@@ -144,16 +188,43 @@ export function StudentInformation() {
     ))
   }
 
-  const handleSubmit = (e:any) => {
-    e.preventDefault()
-    // Here you would typically send the formData and documents to your backend
+  const handleSubmit = async() => {
+    try{
+
+      //@ts-ignore
+    formData["achievements"]=achievements
+      //@ts-ignore
+    formData["dob"]=format(formData["dob"])
+    //@ts-ignore
+    formData["studentType"]=studentType
     console.log('Form Data:', formData)
+    console.log('Achievements:', achievements.filter(a => a.trim() !== ''))
     console.log('Documents:', documents)
-    // Implement your form submission logic here
+    const res=await axios.post(`${BACKEND_URL}/api/student/addinformation`,{
+      formData,
+
+    },{
+      headers:{
+        Authorization:localStorage.getItem("studenttoken")
+      }
+    })
+
+
+    console.log(res)
+
+    }
+    catch(err)
+    {
+
+      alert(err)
+    }
+
+    
+ 
   }
 
   return (
-    <div className="min-h-screen w-screen absolute left-0 right-0 top-0 bg-gradient-to-b from-purple-100 to-blue-200">
+    <div className="min-h-screen w-screen absolute left-0 top-0 bg-gradient-to-b from-purple-100 to-blue-200">
       <header className="bg-white shadow-md">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-2">
@@ -165,7 +236,17 @@ export function StudentInformation() {
             <NavLink href="/scholarships">Scholarships</NavLink>
             <NavLink href="/student-information">Student Information</NavLink>
           </nav>
+          <button className="md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+            <Menu className="h-6 w-6 text-purple-600" />
+          </button>
         </div>
+        {mobileMenuOpen && (
+          <nav className="md:hidden bg-white py-2">
+            <NavLink href="/" className="block px-4 py-2">Home</NavLink>
+            <NavLink href="/scholarships" className="block px-4 py-2">Scholarships</NavLink>
+            <NavLink href="/student-information" className="block px-4 py-2">Student Information</NavLink>
+          </nav>
+        )}
       </header>
 
       <main className="container mx-auto px-4 py-8">
@@ -173,23 +254,36 @@ export function StudentInformation() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-4xl font-bold text-center text-purple-800 mb-8"
+          className="text-3xl md:text-4xl font-bold text-center text-purple-800 mb-8"
         >
           Student Information
         </motion.h1>
 
-        <form onSubmit={handleSubmit}>
-          <Card className="mb-8">
+        <div className='w-full'>
+          <Card className="mb-8 w-full md:w-2/3 lg:w-1/2 mx-auto">
             <CardHeader>
-              <CardTitle className="text-2xl font-bold text-purple-800">Personal Information</CardTitle>
+              <CardTitle className="text-xl md:text-2xl font-bold text-purple-800">Personal Information</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <InputField icon={<User />} label="Full Name" name="name" value={formData.name} onChange={handleInputChange} />
-                <InputField icon={<Mail />} label="Email" name="email" value={formData.email} onChange={handleInputChange} type="email" />
+                <div className="col-span-1 md:col-span-2">
+                  <Label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-1">
+                    Gender
+                  </Label>
+                  <Select value={formData.gender} onValueChange={handleGenderChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
+                      <SelectItem value="not-disclose">Prefer not to disclose</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
                 <InputField icon={<Calendar />} label="Date of Birth" name="dob" value={formData.dob} onChange={handleInputChange} type="date" />
                 <InputField icon={<DollarSign />} label="Annual Income" name="annualIncome" value={formData.annualIncome} onChange={handleInputChange} type="number" />
-                <div className="col-span-2">
+                <div className="col-span-1 md:col-span-2">
                   <Label htmlFor="studentType" className="block text-sm font-medium text-gray-700 mb-1">
                     Student Type
                   </Label>
@@ -205,13 +299,44 @@ export function StudentInformation() {
                     </SelectContent>
                   </Select>
                 </div>
+                <div className="col-span-1 md:col-span-2">
+                  <Label className="block text-sm font-medium text-gray-700 mb-1">
+                    Achievements
+                  </Label>
+                  <div className="space-y-2">
+                    {achievements.map((achievement, index) => (
+                      <div key={index} className="flex items-center space-x-2">
+                        <Input
+                          value={achievement}
+                          onChange={(e) => handleAchievementChange(index, e.target.value)}
+                          placeholder="Enter an achievement"
+                          className="flex-grow"
+                        />
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => handleRemoveAchievement(index)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                    <Button
+                      variant="outline"
+                      onClick={handleAddAchievement}
+                      className="w-full"
+                    >
+                      <Plus className="h-4 w-4 mr-2" /> Add Achievement
+                    </Button>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="mb-8">
+          <Card className="mb-8 w-full md:w-2/3 lg:w-1/2 mx-auto">
             <CardHeader>
-              <CardTitle className="text-2xl font-bold text-purple-800">Education Details</CardTitle>
+              <CardTitle className="text-xl md:text-2xl font-bold text-purple-800">Education Details</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -220,9 +345,9 @@ export function StudentInformation() {
             </CardContent>
           </Card>
 
-          <Card className="mb-8">
+          <Card className="mb-8 w-full md:w-2/3 lg:w-1/2 mx-auto">
             <CardHeader>
-              <CardTitle className="text-2xl font-bold text-purple-800">Document Upload</CardTitle>
+              <CardTitle className="text-xl md:text-2xl font-bold text-purple-800">Document Upload</CardTitle>
             </CardHeader>
             <CardContent>
               {renderDocumentUploads()}
@@ -230,14 +355,14 @@ export function StudentInformation() {
           </Card>
 
           <div className="flex justify-center">
-            <Button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition duration-300 ease-in-out transform hover:scale-105">
+            <Button onClick={handleSubmit} className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 md:px-8 md:py-3 rounded-lg text-base md:text-lg font-semibold transition duration-300 ease-in-out transform hover:scale-105">
               Submit Information
             </Button>
           </div>
-        </form>
+        </div>
       </main>
 
-      <footer className="bg-gray-800 text-white py-8 mt-12">
+      <footer className="bg-gray-800 text-white py-6 md:py-8 mt-12">
         <div className="container mx-auto px-4 text-center">
           <p>&copy; 2023 ScholarLink. All rights reserved.</p>
         </div>
@@ -245,14 +370,16 @@ export function StudentInformation() {
     </div>
   )
 }
+
 //@ts-ignore
-function NavLink({ href, children }) {
+function NavLink({ href, children, className = "" }) {
   return (
-    <Link to={href} className="text-gray-600 hover:text-purple-600 transition-colors duration-200">
+    <Link to={href} className={`text-gray-600 hover:text-purple-600 transition-colors duration-200 ${className}`}>
       {children}
     </Link>
   )
 }
+
 //@ts-ignore
 function InputField({ icon, label, name, value, onChange, type = "text" }) {
   return (

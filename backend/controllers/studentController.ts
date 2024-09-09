@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt"
-import { rmSync } from "fs";
+
 import jwt from "jsonwebtoken"
 const prisma=new PrismaClient();
 
@@ -66,71 +66,67 @@ export const studentLogin=async(req:any,res:any)=>{
 
 
 
-const addDetails=async(req:any,res:any)=>{
+export const addDetails=async(req:any,res:any)=>{
     try{
-        const {currentQualifications,gender,annualIncome,dob,bonafide,incomecertificate,salaryslip,achievements}=req.body
+        console.log(req.body)
+        console.log(req.headers)
+        const {studentType,dob,annualIncome,schoolName,schoolLocation,score,annualScore,grade,hscSchoolName,hscSchoolLocation,sscGrade,degree,discipline,collegeName,collegeLocation,gpa,hscGrade,ugcgpa,startYear,endYear,gender,achievements}=req.body.formData
         await prisma.$transaction(async(tx)=>{
             await tx.studentDetails.create({
                 data:{
                     studemail:req.headers.email,
-                    currentQualifications,
+                    currentQualifications:studentType,
                     gender,
-                    annualIncome,
+                    annualIncome:parseInt(annualIncome),
                     dob,
-                    bonafide,
-                    incomecertificate,
-                    salaryslip,
                     achievements
 
                 }
             })
 
 
-            if(currentQualifications==="Secondary")
+            if(studentType==="Secondary")
             {
-                const {schoolname,schoollocation,score,annualScore,annualcard,grade}=req.body
+              
                 await tx.secondaryStudentDetails.create({
                     data:{
                         emailId:req.headers.email,
-                        schoolname,
-                        schoollocation,
-                        score,
+                        schoolname:schoolName,
+                        schoollocation:schoolLocation,
+                        score:parseFloat(score),
                         annualScore,
-                        annualcard,
                         grade
                     }
                 })
             }
-            else if(currentQualifications==="HSC")
+            else if(studentType==="HSC")
             {
-                const {schoolname,schoollocation,sscgrade,sscmarksheet}=req.body
+                
                 await tx.hSCStudentDetails.create({
                     data:{
                         emailId:req.headers.email,
-                        schoolname,
-                        schoollocation,
-                        sscgrade,
-                        sscmarksheet
+                        schoolname:hscSchoolName,
+                        schoollocation:hscSchoolLocation,
+                        sscgrade:parseFloat(sscGrade),
+                 
                     }
                 })
             }
-            else if(currentQualifications==="UG")
+            else if(studentType==="Unergraduate")
             {   
-                const {degree,discipline,collegename,collegelocation,sscgrade,sscmarksheet,hscgrade,hscmarksheet,gpa,styear,endyear}=req.body
+
                 await tx.uGCollegeStudentDetails.create({
                     data:{
                         emailId:req.headers.email,
                         degree,
                         discipline,
-                        collegename,
-                        collegelocation,
-                        sscgrade,
-                        sscmarksheet,
-                        hscgrade,
-                        hscmarksheet,
+                        collegename:collegeName,
+                        collegelocation:collegeLocation,
+                        sscgrade:parseFloat(sscGrade),
+                        hscgrade:parseFloat(hscGrade),
                         gpa,
-                        styear,
-                        endyear
+                        styear:parseInt(startYear),
+                        endyear:parseInt(endYear)
                     }
                 })
 
@@ -138,20 +134,19 @@ const addDetails=async(req:any,res:any)=>{
 
 
             }
-            else if(currentQualifications==="PG")
+            else if(studentType==="Postgraduate")
             {   
-                const {degree,discipline,collegename,collegelocation,ugcgpa,degreecertificate,styear,endyear}=req.body
+               
                 await tx.pGCollegeStudentDetails.create({
                     data:{
                         emailId:req.headers.email,
                         degree,
                         discipline,
-                        collegename,
-                        collegelocation,
+                        collegename:collegeName,
+                        collegelocation:collegeLocation,
                         ugcgpa,
-                        degreecertificate,
-                        styear,
-                        endyear
+                        styear:parseInt(startYear),
+                        endyear:parseInt(endYear)
                     }
                 })
             }
@@ -161,7 +156,8 @@ const addDetails=async(req:any,res:any)=>{
         
 
     }
-    catch{
+    catch(err){
+        console.log(err)
         return res.status(500).json({msg:"error"})
     }
 

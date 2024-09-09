@@ -62,7 +62,7 @@ model HSCStudentDetails{
   schoolname String
   schoollocation String
   sscgrade Float
-  sscmarksheet String
+  sscmarksheet String?
 
 
 }
@@ -77,9 +77,9 @@ model UGCollegeStudentDetails{
   collegename String
   collegelocation String
   sscgrade Float
-  sscmarksheet String
+  sscmarksheet String?
   hscgrade Float
-  hscmarksheet String 
+  hscmarksheet String? 
   gpa Float
   styear Int
   endyear Int
@@ -97,7 +97,7 @@ model PGCollegeStudentDetails{
   collegename String
   collegelocation String
   ugcgpa Float
-  degreecertificate String
+  degreecertificate String?
   styear Int
   endyear Int
 
@@ -127,6 +127,9 @@ model Scholarship{
   amt Int
   regstdate String
   regenddate String
+  description String
+  procedures String[]
+  
 
 }
 

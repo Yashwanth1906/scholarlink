@@ -17,7 +17,8 @@ const BACKEND_PORT = process.env.PORT
 
 
 app.get("/test",async(req,res)=>{
-
+    await prisma.studentDetails.deleteMany({})
+    return res.send("done")
 
     
 })
