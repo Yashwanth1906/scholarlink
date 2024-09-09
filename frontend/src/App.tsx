@@ -1,6 +1,8 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { ScholarshipHome } from './pages/scholarship-home'
 import { Scholarships } from './pages/scholarships'
+import { MyProfile } from './pages/my-profile'
+import { StudentInformation } from './pages/student-information'
 import './App.css'
 import { StudentRegister } from './pages/studentRegister'
 import { StudLogin } from './pages/studentLogin'
