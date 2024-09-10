@@ -9,7 +9,7 @@ export const authMiddleware=async(req:any,res:any,next:any)=>{
     try{
         const data=jwt.verify(token,process.env.JWT_SECRET || "student") as JwtPayload;
         console.log(data)
-        req.headers.id=data.id 
+        req.headers.email=data.id 
         return next();
     }
     catch(err){

@@ -101,11 +101,8 @@ const uploadToS3 = async (file: Express.Multer.File, folder: string) => {
       throw new Error("Error uploading file to S3");
     }
   };
-
   export const addDetails = async (req: any, res: any): Promise<Response> => {
     try {
-      console.log(req.body)
-      const formData = req.body.formData || {};
       const {
         studenttype,
         dob,
@@ -132,126 +129,146 @@ const uploadToS3 = async (file: Express.Multer.File, folder: string) => {
         gaurdianOccupation,
         parentContactNo,
         contactNo,
-        sscSchoolName,sscSchoolLocation,hscSchoolName,hscSchoolLocation,
-        ugCollegename,ugCollegeLocation,pgCollegeName,pgCollegeLocation,
+        sscSchoolName,
+        sscSchoolLocation,
+        hscSchoolName,
+        hscSchoolLocation,
+        ugCollegename,
+        ugCollegeLocation,
+        pgCollegeName,
+        pgCollegeLocation,
         community
-      } = formData;
-      console.log(req.body)
-
-
-      const bonafideUrl = req.files?.bonafide ? await uploadToS3(req.files.bonafide[0] as Express.Multer.File, 'documents') : null;
-      const incomeCertificateUrl = req.files?.incomeCertificate ? await uploadToS3(req.files.incomecertificate[0] as Express.Multer.File, 'documents') : null;
-      const salarySlipUrl = req.files?.salarySlip ? await uploadToS3(req.files.salaryslip[0] as Express.Multer.File, 'documents') : null;
-      const annualCardUrl = req.files?.annualCard ? await uploadToS3(req.files.annualCard[0] as Express.Multer.File, 'documents') : null;
-      const sscMarksheetUrl = req.files?.sscMarksheet ? await uploadToS3(req.files.sscMarksheet[0] as Express.Multer.File, 'documents') : null;
-      const hscMarksheetUrl = req.files?.hscMarksheet ? await uploadToS3(req.files.hscMarksheet[0] as Express.Multer.File, 'documents') : null;
-      const ugDegreeCertificateUrl = req.files?.ugDegreeCertificate ? await uploadToS3(req.files.ugDegreeCertificate[0] as Express.Multer.File, 'documents') : null;
-      const aadhaarCardUrl = req.files?.aadhaarCard ? await uploadToS3(req.files.aadhaarCard[0] as Express.Multer.File, 'documents') : null;
-      const rationCardUrl = req.files?.rationCard ? await uploadToS3(req.files.rationCard[0] as Express.Multer.File, 'documents') : null;
-      const firstGraduateUrl = req.files?.firstGraduateCertificate ? await uploadToS3(req.files.firstGraduate[0] as Express.Multer.File, 'documents') : null;
+      } = req.body;
+      console.log(achievements)
+      const [
+        bonafideUrl,
+        incomeCertificateUrl,
+        salarySlipUrl,
+        annualCardUrl,
+        sscMarksheetUrl,
+        hscMarksheetUrl,
+        ugDegreeCertificateUrl,
+        aadhaarCardUrl,
+        rationCardUrl,
+        firstGraduateUrl,
+      ] = await Promise.all([
+        req.files?.bonafide ? uploadToS3(req.files?.bonafide[0] as Express.Multer.File, 'documents') : null,
+        req.files?.incomeCertificate ? uploadToS3(req.files?.incomeCertificate[0] as Express.Multer.File, 'documents') : null,
+        req.files?.salarySlip ? uploadToS3(req.files?.salarySlip[0] as Express.Multer.File, 'documents') : null,
+        req.files?.annualCard ? uploadToS3(req.files?.annualCard[0] as Express.Multer.File, 'documents') : null,
+        req.files?.sscMarksheet ? uploadToS3(req.files?.sscMarksheet[0] as Express.Multer.File, 'documents') : null,
+        req.files?.hscMarksheet ? uploadToS3(req.files?.hscMarksheet[0] as Express.Multer.File, 'documents') : null,
+        req.files?.ugDegreeCertificate ? uploadToS3(req.files?.ugDegreeCertificate[0] as Express.Multer.File, 'documents') : null,
+        req.files?.aadhaarCard ? uploadToS3(req.files?.aadhaarCard[0] as Express.Multer.File, 'documents') : null,
+        req.files?.rationCard ? uploadToS3(req.files?.rationCard[0] as Express.Multer.File, 'documents') : null,
+        req.files?.firstGraduateCertificate ? uploadToS3(req.files?.firstGraduateCertificate[0] as Express.Multer.File, 'documents') : null,
+      ]);
   
+      // Start transaction
       await prisma.$transaction(async (tx) => {
+        // Create student details
         await tx.studentDetails.create({
           data: {
             studemail: req.headers.email as string,
-            currentQualifications: studenttype,
+            currentQualifications: studenttype || 'Unknown',
             gender,
-            annualIncome: parseInt(annualIncome, 10),
+            annualIncome: parseInt(annualIncome, 10) || 0,
             dob,
-            achievements,
+            achievements: achievements || '',
             fatherName: fatherName || null,
             motherName: motherName || null,
             fatherOccupation: fatherOccupation || null,
             motherOccupation: motherOccupation || null,
             gaurdianName: gaurdianName || null,
             gaurdianOccupation: gaurdianOccupation || null,
-            parentContactNo: parentContactNo+"",
-            contactNo: contactNo+"",
-            aadharCard: aadhaarCardUrl,
-            rationCard: rationCardUrl,
-            firstGraduate: firstGraduateUrl,
-            bonafide: bonafideUrl,
-            incomecertificate: incomeCertificateUrl,
-            salaryslip: salarySlipUrl,
-            community
+            parentContactNo: parentContactNo ? parentContactNo  : null,
+            contactNo: contactNo ? contactNo : null,
+            aadharCard: aadhaarCardUrl || null,
+            rationCard: rationCardUrl || null,
+            firstGraduate: firstGraduateUrl || null,
+            bonafide: bonafideUrl || null,
+            incomecertificate: incomeCertificateUrl || null,
+            salaryslip: salarySlipUrl || null,
+            community: community || 'Unknown',
           },
         });
-  
+        console.log("hi")
         if (studenttype === 'Secondary') {
           await tx.secondaryStudentDetails.create({
             data: {
               emailId: req.headers.email as string,
-              schoolname: schoolname,
-              schoollocation: schoolLocation,
-              score: parseFloat(score),
-              grade,
-              annualcard: annualCardUrl,
+              schoolname: schoolname || '',
+              schoollocation: schoolLocation || '',
+              score: parseFloat(score) || 0,
+              grade: grade || '',
+              annualcard: annualCardUrl || null,
             },
           });
         } else if (studenttype === 'HSC') {
           await tx.hSCStudentDetails.create({
             data: {
               emailId: req.headers.email as string,
-              sscschoolname: sscSchoolName,
-              sscschoollocation:sscSchoolLocation,
-              schoolname: hscSchoolName,
-              schoollocation: hscSchoolLocation,
-              sscgrade: parseFloat(sscGrade),
-              sscmarksheet: sscMarksheetUrl,
+              sscschoolname: sscSchoolName || '',
+              sscschoollocation: sscSchoolLocation || '',
+              schoolname: hscSchoolName || '',
+              schoollocation: hscSchoolLocation || '',
+              sscgrade: parseFloat(sscGrade) || 0,
+              sscmarksheet: sscMarksheetUrl || null,
             },
           });
-        } else if (studenttype === 'Undergraduate') {
+        } else if (studenttype === 'undergraduate') {
           await tx.uGCollegeStudentDetails.create({
             data: {
               emailId: req.headers.email as string,
-              degree,
-              discipline,
-              sscschoolname:sscSchoolName,
-              sscschoollocation:sscSchoolLocation,
-              hscschoolname:hscSchoolName,
-              hscschoollocation:hscSchoolLocation,
-              collegename: ugCollegename,
-              collegelocation: ugCollegeLocation,
-              sscgrade: parseFloat(sscGrade),
-              sscmarksheet: sscMarksheetUrl,
-              hscgrade: parseFloat(hscGrade),
-              hscmarksheet: hscMarksheetUrl,
-              gpa,
-              styear: parseInt(stYear, 10),
-              endyear: parseInt(endYear, 10),
+              degree: degree || '',
+              discipline: discipline || '',
+              sscschoolname: sscSchoolName || '',
+              sscschoollocation: sscSchoolLocation || '',
+              hscschoolname: hscSchoolName || '',
+              hscschoollocation: hscSchoolLocation || '',
+              collegename: ugCollegename || '',
+              collegelocation: ugCollegeLocation || '',
+              sscgrade: parseFloat(sscGrade) || 0,
+              sscmarksheet: sscMarksheetUrl || null,
+              hscgrade: parseFloat(hscGrade) || 0,
+              hscmarksheet: hscMarksheetUrl || null,
+              gpa: gpa || '0',
+              styear: parseInt(stYear, 10) || 0,
+              endyear: parseInt(endYear, 10) || 0,
             },
           });
         } else if (studenttype === 'Postgraduate') {
           await tx.pGCollegeStudentDetails.create({
             data: {
               emailId: req.headers.email as string,
-              degree,
-              discipline,
-              sscschoolname:sscSchoolName,
-              sscschoollocation:sscSchoolLocation,
-              hscschoolname:hscSchoolName,
-              hscschoollocation:hscSchoolLocation,
-              ugcollegename:ugCollegename,
-              ugcollegelocation:ugCollegeLocation,
-              collegename: pgCollegeName,
-              collegelocation: pgCollegeLocation,
-              hscgrade:hscGrade,
-              sscgrade:sscGrade,
-              ugcgpa:ugCgpa,
-              styear: parseInt(stYear, 10),
-              endyear: parseInt(endYear, 10),
-              ugdegreecertificate: ugDegreeCertificateUrl,
+              degree: degree || '',
+              discipline: discipline || '',
+              sscschoolname: sscSchoolName || '',
+              sscschoollocation: sscSchoolLocation || '',
+              hscschoolname: hscSchoolName || '',
+              hscschoollocation: hscSchoolLocation || '',
+              ugcollegename: ugCollegename || '',
+              ugcollegelocation: ugCollegeLocation || '',
+              collegename: pgCollegeName || '',
+              collegelocation: pgCollegeLocation || '',
+              hscgrade: hscGrade || '',
+              sscgrade: sscGrade || '',
+              ugcgpa: ugCgpa || '0',
+              styear: parseInt(stYear, 10) || 0,
+              endyear: parseInt(endYear, 10) || 0,
+              ugdegreecertificate: ugDegreeCertificateUrl || '',
             },
           });
         }
       });
-  
-      return res.status(200).json({ msg: 'done' });
+      console.log("Last")
+      return res.status(200).json({ msg: 'Details successfully added' });
     } catch (err) {
-      console.log(err);
-      return res.status(500).json({ msg: 'error' });
+      console.error('Error in addDetails:', err);
+      return res.status(500).json({ msg: 'Internal server error' });
     }
   };
+  
 
 export const getScholarships=async(req:any,res:any)=>{
     try{
