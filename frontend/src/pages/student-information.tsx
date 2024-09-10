@@ -6,8 +6,9 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
 import { User, Mail, Phone, Calendar, DollarSign, GraduationCap, School, MapPin, FileText, Upload, Award, Plus, X } from 'lucide-react'
+import axios from 'axios'
+import { BACKEND_URL } from '../../config'
 
 const InputField = ({ label, name, icon, type = "text", value, onChange }) => {
   return (
@@ -75,7 +76,20 @@ const PersonalInfoCard = ({ profileData, updateProfileData, addAchievement, remo
       <CardTitle className="text-xl font-bold">Personal Information</CardTitle>
     </CardHeader>
     <CardContent className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-      <InputField label="Student Email" name="studemail" icon={<Mail className="w-4 h-4" />} type="email" value={profileData.studemail} onChange={updateProfileData} />
+      <SelectField
+        label="Community"
+        name="community"
+        icon={<User className="w-4 h-4" />}
+        options={[
+          { value: 'general', label: 'General' },
+          { value: 'obc', label: 'OBC' },
+          { value: 'sc', label: 'SC' },
+          { value: 'st', label: 'ST' },
+          { value: 'other', label: 'Other' },
+        ]}
+        value={profileData.community}
+        onChange={updateProfileData}
+      />
       <InputField label="Father's Name" name="fatherName" icon={<User className="w-4 h-4" />} value={profileData.fatherName} onChange={updateProfileData} />
       <InputField label="Mother's Name" name="motherName" icon={<User className="w-4 h-4" />} value={profileData.motherName} onChange={updateProfileData} />
       <InputField label="Father's Occupation" name="fatherOccupation" icon={<User className="w-4 h-4" />} value={profileData.fatherOccupation} onChange={updateProfileData} />
@@ -89,7 +103,7 @@ const PersonalInfoCard = ({ profileData, updateProfileData, addAchievement, remo
         icon={<GraduationCap className="w-4 h-4" />}
         options={[
           { value: 'secondary', label: 'Secondary' },
-          { value: 'higher_secondary', label: 'Higher Secondary' },
+          { value: 'higher_secondary', label: 'HSC' },
           { value: 'undergraduate', label: 'Undergraduate' },
           { value: 'postgraduate', label: 'Postgraduate' },
         ]}
@@ -111,19 +125,7 @@ const PersonalInfoCard = ({ profileData, updateProfileData, addAchievement, remo
       <InputField label="Contact No" name="contactNo" icon={<Phone className="w-4 h-4" />} value={profileData.contactNo} onChange={updateProfileData} />
       <InputField label="Annual Income" name="annualIncome" icon={<DollarSign className="w-4 h-4" />} type="number" value={profileData.annualIncome} onChange={updateProfileData} />
       <InputField label="Date of Birth" name="dob" icon={<Calendar className="w-4 h-4" />} type="date" value={profileData.dob} onChange={updateProfileData} />
-      <div className="flex items-center space-x-2">
-        <Checkbox
-          id="firstGraduate"
-          checked={profileData.firstGraduate}
-          onCheckedChange={(checked) => updateProfileData('firstGraduate', checked)}
-        />
-        <label
-          htmlFor="firstGraduate"
-          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-        >
-          First Graduate
-        </label>
-      </div>
+      <FileUpload label="First Graduate Certificate" name="firstGraduateCertificate" onChange={updateProfileData} />
       <div className="col-span-2">
         <Label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-2">
           <Award className="w-4 h-4" />
@@ -164,7 +166,7 @@ const SecondaryEducationCard = ({ profileData, updateProfileData }) => (
     </CardHeader>
     <CardContent className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
       <InputField label="School Name" name="schoolname" icon={<School className="w-4 h-4" />} value={profileData.schoolname} onChange={updateProfileData} />
-      <InputField label="School Location" name="location" icon={<MapPin className="w-4 h-4" />} value={profileData.location} onChange={updateProfileData} />
+      <InputField label="School Location" name="schoollocation" icon={<MapPin className="w-4 h-4" />} value={profileData.schoollocation} onChange={updateProfileData} />
       <InputField label="Score" name="score" icon={<FileText className="w-4 h-4" />} value={profileData.score} onChange={updateProfileData} />
       <FileUpload label="Annual Card" name="annualCard" onChange={updateProfileData} />
     </CardContent>
@@ -179,10 +181,12 @@ const HigherSecondaryEducationCard = ({ profileData, updateProfileData }) => (
     <CardContent className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
       <InputField label="SSC School Name" name="sscSchoolName" icon={<School className="w-4 h-4" />} value={profileData.sscSchoolName} onChange={updateProfileData} />
       <InputField label="SSC School Location" name="sscSchoolLocation" icon={<MapPin className="w-4 h-4" />} value={profileData.sscSchoolLocation} onChange={updateProfileData} />
+      <InputField label="HSC School Name" name="hscSchoolName" icon={<School className="w-4 h-4" />} value={profileData.hscSchoolName} onChange={updateProfileData} />
+      <InputField label="HSC School Location" name="hscSchoolLocation" icon={<MapPin className="w-4 h-4" />} value={profileData.hscSchoolLocation} onChange={updateProfileData} />
       <InputField label="SSC Grade" name="sscGrade" icon={<FileText className="w-4 h-4" />} value={profileData.sscGrade} onChange={updateProfileData} />
       <FileUpload label="SSC Marksheet" name="sscMarksheet" onChange={updateProfileData} />
-      <InputField label="Current School Name" name="currentSchoolName" icon={<School className="w-4 h-4" />} value={profileData.currentSchoolName} onChange={updateProfileData} />
-      <InputField label="Current School Location" name="currentSchoolLocation" icon={<MapPin className="w-4 h-4" />} value={profileData.currentSchoolLocation} onChange={updateProfileData} />
+      <InputField label="HSC Grade" name="hscGrade" icon={<FileText className="w-4 h-4" />} value={profileData.hscGrade} onChange={updateProfileData} />
+      <FileUpload label="HSC Marksheet" name="hscMarksheet" onChange={updateProfileData} />
     </CardContent>
   </Card>
 )
@@ -199,8 +203,8 @@ const UndergraduateEducationCard = ({ profileData, updateProfileData }) => (
       <InputField label="SSC School Location" name="sscSchoolLocation" icon={<MapPin className="w-4 h-4" />} value={profileData.sscSchoolLocation} onChange={updateProfileData} />
       <InputField label="HSC School Name" name="hscSchoolName" icon={<School className="w-4 h-4" />} value={profileData.hscSchoolName} onChange={updateProfileData} />
       <InputField label="HSC School Location" name="hscSchoolLocation" icon={<MapPin className="w-4 h-4" />} value={profileData.hscSchoolLocation} onChange={updateProfileData} />
-      <InputField label="College Name" name="collegeName" icon={<School className="w-4 h-4" />} value={profileData.collegeName} onChange={updateProfileData} />
-      <InputField label="College Location" name="collegeLocation" icon={<MapPin className="w-4 h-4" />} value={profileData.collegeLocation} onChange={updateProfileData} />
+      <InputField label="UG College Name" name="ugCollegeName" icon={<School className="w-4 h-4" />} value={profileData.ugCollegeName} onChange={updateProfileData} />
+      <InputField label="UG College Location" name="ugCollegeLocation" icon={<MapPin className="w-4 h-4" />} value={profileData.ugCollegeLocation} onChange={updateProfileData} />
       <InputField label="SSC Grade" name="sscGrade" icon={<FileText className="w-4 h-4" />} value={profileData.sscGrade} onChange={updateProfileData} />
       <FileUpload label="SSC Marksheet" name="sscMarksheet" onChange={updateProfileData} />
       <InputField label="HSC Grade" name="hscGrade" icon={<FileText className="w-4 h-4" />} value={profileData.hscGrade} onChange={updateProfileData} />
@@ -221,13 +225,13 @@ const PostgraduateEducationCard = ({ profileData, updateProfileData }) => (
       <InputField label="Degree" name="degree" icon={<GraduationCap className="w-4 h-4" />} value={profileData.degree} onChange={updateProfileData} />
       <InputField label="Discipline" name="discipline" icon={<GraduationCap className="w-4 h-4" />} value={profileData.discipline} onChange={updateProfileData} />
       <InputField label="SSC School Name" name="sscSchoolName" icon={<School className="w-4 h-4" />} value={profileData.sscSchoolName} onChange={updateProfileData} />
-      <InputField label="SSC School Location" name="sscSchoolLocation" icon={<MapPin className="w-4 h-4" />} value={profileData.sscSchoolLocation} onChange={updateProfileData} />
+      <InputField label="SS School Location" name="sscSchoolLocation" icon={<MapPin className="w-4 h-4" />} value={profileData.sscSchoolLocation} onChange={updateProfileData} />
       <InputField label="HSC School Name" name="hscSchoolName" icon={<School className="w-4 h-4" />} value={profileData.hscSchoolName} onChange={updateProfileData} />
       <InputField label="HSC School Location" name="hscSchoolLocation" icon={<MapPin className="w-4 h-4" />} value={profileData.hscSchoolLocation} onChange={updateProfileData} />
       <InputField label="UG College Name" name="ugCollegeName" icon={<School className="w-4 h-4" />} value={profileData.ugCollegeName} onChange={updateProfileData} />
       <InputField label="UG College Location" name="ugCollegeLocation" icon={<MapPin className="w-4 h-4" />} value={profileData.ugCollegeLocation} onChange={updateProfileData} />
-      <InputField label="PG College Name" name="collegeName" icon={<School className="w-4 h-4" />} value={profileData.collegeName} onChange={updateProfileData} />
-      <InputField label="PG College Location" name="collegeLocation" icon={<MapPin className="w-4 h-4" />} value={profileData.collegeLocation} onChange={updateProfileData} />
+      <InputField label="PG College Name" name="pgCollegeName" icon={<School className="w-4 h-4" />} value={profileData.pgCollegeName} onChange={updateProfileData} />
+      <InputField label="PG College Location" name="pgCollegeLocation" icon={<MapPin className="w-4 h-4" />} value={profileData.pgCollegeLocation} onChange={updateProfileData} />
       <InputField label="SSC Grade" name="sscGrade" icon={<FileText className="w-4 h-4" />} value={profileData.sscGrade} onChange={updateProfileData} />
       <FileUpload label="SSC Marksheet" name="sscMarksheet" onChange={updateProfileData} />
       <InputField label="HSC Grade" name="hscGrade" icon={<FileText className="w-4 h-4" />} value={profileData.hscGrade} onChange={updateProfileData} />
@@ -255,9 +259,9 @@ const DocumentsCard = ({ updateProfileData }) => (
   </Card>
 )
 
-export  function StudentInformation() {
+export function StudentInformation() {
   const [profileData, setProfileData] = useState({
-    studemail: '',
+    community: '',
     fatherName: '',
     motherName: '',
     fatherOccupation: '',
@@ -270,33 +274,31 @@ export  function StudentInformation() {
     contactNo: '',
     annualIncome: '',
     dob: '',
-    firstGraduate: false,
+    firstGraduateCertificate: null,
     achievements: [],
     schoolname: '',
-    location: '',
+    schoollocation: '',
     score: '',
     annualCard: null,
     sscSchoolName: '',
     sscSchoolLocation: '',
-    sscGrade: '',
-    sscMarksheet: null,
-    currentSchoolName: '',
-    currentSchoolLocation: '',
-    degree: '',
-    discipline: '',
     hscSchoolName: '',
     hscSchoolLocation: '',
-    collegeName: '',
-    collegeLocation: '',
-    hscGrade: '',
-    hscMarksheet: null,
-    gpa: '',
-    stYear: '',
-    endYear: '',
     ugCollegeName: '',
     ugCollegeLocation: '',
+    pgCollegeName: '',
+    pgCollegeLocation: '',
+    sscGrade: '',
+    sscMarksheet: null,
+    hscGrade: '',
+    hscMarksheet: null,
+    degree: '',
+    discipline: '',
+    gpa: '',
     ugCgpa: '',
     ugDegreeCertificate: null,
+    stYear: '',
+    endYear: '',
     aadharCard: null,
     rationCard: null,
     bonafide: null,
@@ -325,10 +327,33 @@ export  function StudentInformation() {
     }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log('Profile data to be sent to backend:', profileData)
-    // Here you would typically send the data to your backend
+    console.log(profileData)
+    try {
+      const formData = new FormData()
+      for (const key in profileData) {
+        if (profileData[key] instanceof File) {
+          formData.append(key, profileData[key])
+        } else if (Array.isArray(profileData[key])) {
+          formData.append(key, JSON.stringify(profileData[key]))
+        } else {
+          formData.append(key, profileData[key])
+        }
+      }
+      console
+
+      const res = await axios.post(`${BACKEND_URL}/api/student/addinformation`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: localStorage.getItem("studenttoken")
+        }
+      })
+
+      console.log(res)
+    } catch (error) {
+      console.error("Error submitting profile data:", error)
+    }
   }
 
   return (
@@ -346,7 +371,7 @@ export  function StudentInformation() {
           {profileData.studenttype === 'undergraduate' && <UndergraduateEducationCard profileData={profileData} updateProfileData={updateProfileData} />}
           {profileData.studenttype === 'postgraduate' && <PostgraduateEducationCard profileData={profileData} updateProfileData={updateProfileData} />}
           <DocumentsCard updateProfileData={updateProfileData} />
-          <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition duration-300">
+          <Button type="submit" className="w-1/2 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition duration-300">
             Save Profile
           </Button>
         </form>
