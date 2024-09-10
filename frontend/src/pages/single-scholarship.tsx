@@ -1,53 +1,93 @@
-'use client'
 
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-// import Image from 'next/image'
+
+import { useEffect, useState } from 'react'
+import { motion, } from 'framer-motion'
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from "@/components/ui/dialog"
 import { Separator } from "@/components/ui/separator"
 import { GraduationCap, DollarSign, Users, ThumbsUp, Calendar, Clock, Book, AlertCircle, CheckCircle2, XCircle } from 'lucide-react'
-import {Link, useNavigate} from "react-router-dom"
+import {Link, useSearchParams} from "react-router-dom"
+import { BACKEND_URL } from '../../config'
+import axios from 'axios'
 
-// Mock scholarship data
-const scholarship = {
-  id: 1,
-  name: "Future Tech Leaders Scholarship",
-  providedBy: "TechCorp Foundation",
-  eligibility: "Undergraduate students in Computer Science",
-  likes: 1250,
-  amount: 10000,
-  description: "This scholarship aims to support promising undergraduate students pursuing a degree in Computer Science. It covers tuition fees and provides a stipend for living expenses.",
-  applicationDeadline: "2023-12-31",
-  duration: "1 year",
-  renewalCriteria: "Maintain a GPA of 3.5 or higher",
-  coverageDetails: [
-    "Full tuition fees",
-    "Monthly stipend of $500",
-    "Laptop allowance of $1000",
-    "Conference attendance allowance"
-  ],
-  eligibilityCriteria: [
-    "Enrolled in an accredited Computer Science program",
-    "Minimum GPA of 3.2",
-    "Demonstrated leadership skills",
-    "Strong interest in emerging technologies"
-  ],
-  applicationProcess: [
-    "Submit online application",
-    "Provide academic transcripts",
-    "Write a 500-word essay on your tech vision",
-    "Obtain two letters of recommendation"
-  ]
+type scholarship={
+  
+    "id": number,
+    "name": string,
+    "providedby": number,
+    "scholarshipfor": string[],
+    "likes": number,
+    "amt": number,
+    "regstdate": string,
+    "regenddate": string,
+    "description": string,
+    "procedures": string[],
+    "admin": {
+            "id": number,
+            "email": string,
+            "password": string,
+            "orgname": string
+        }
 }
 
-export function SingleScholarship() {
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
 
-  const handleApply = () => {
+export function SingleScholarship() {
+  //@ts-ignore
+  const [scholarship,setScholarship]=useState<scholarship>({})
+  const [search,]=useSearchParams();
+  const [isDialogOpen,setIsDialogOpen]=useState<boolean>();
+  const [loading,setLoading]=useState<boolean>(true)
+
+
+  useEffect(()=>{
+    console.log("hello")
+    axios.get(`${BACKEND_URL}/api/student/scholarship?id=${search.get("id")}`,{
+      headers:
+      {
+        Authorization:localStorage.getItem("studenttoken")
+      }
+    }).then((data)=>{
+      setScholarship(data.data.scholarship)
+      console.log(data.data);
+      setLoading(false)
+
+    })
+},[])
+
+  const handleApply=()=>{
     setIsDialogOpen(true)
   }
+
+  const handleSubmit=async ()=>{
+    try{
+      const res=await axios.post(`${BACKEND_URL}/api/student/applyscholarship?id=${search.get("id")}`,{},{
+        headers:{
+          Authorization:localStorage.getItem("studenttoken")
+        
+        }
+      })
+      console.log(res);
+    }
+    catch(err){
+      alert("error")
+
+    }
+
+
+  }
+
+
+  if(loading)
+  {
+    return(
+      <>
+        Loading..
+      </>
+    )
+  }
+
 
   return (
     <div className="min-h-screen w-screen absolute top-0 left-0 right-0 bg-gradient-to-b from-purple-100 to-blue-200">
@@ -93,22 +133,22 @@ export function SingleScholarship() {
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="text-2xl font-bold text-purple-800">{scholarship.name}</CardTitle>
-            <CardDescription className="text-lg text-gray-600">Provided by: {scholarship.providedBy}</CardDescription>
+            <CardDescription className="text-lg text-gray-600">Provided by: {scholarship.admin.orgname}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <InfoItem icon={<Users />} label="Eligibility" value={scholarship.eligibility} />
+                <InfoItem icon={<Users />} label="Eligibility" value={scholarship.scholarshipfor} />
                 <InfoItem icon={<ThumbsUp />} label="Likes" value={scholarship.likes} />
-                <InfoItem icon={<DollarSign />} label="Amount" value={`$${scholarship.amount.toLocaleString()}`} />
-                <InfoItem icon={<Calendar />} label="Application Deadline" value={scholarship.applicationDeadline} />
-                <InfoItem icon={<Clock />} label="Duration" value={scholarship.duration} />
+                <InfoItem icon={<DollarSign />} label="Amount" value={`$${scholarship.amt.toLocaleString()}`} />
+                <InfoItem icon={<Calendar />} label="Application Deadline" value={scholarship.regenddate} />
+                <InfoItem icon={<Clock />} label="Duration" value="1 year" />
               </div>
               <div>
                 <h3 className="text-lg font-semibold mb-2">Description</h3>
                 <p className="text-gray-700 mb-4">{scholarship.description}</p>
                 <h3 className="text-lg font-semibold mb-2">Renewal Criteria</h3>
-                <p className="text-gray-700">{scholarship.renewalCriteria}</p>
+                <p className="text-gray-700">{""}</p>
               </div>
             </div>
 
@@ -118,7 +158,7 @@ export function SingleScholarship() {
             <div>
               <h3 className="text-lg font-semibold mb-2">Application Process</h3>
               <ol className="list-decimal list-inside text-gray-700">
-                {scholarship.applicationProcess.map((step, index) => (
+                {scholarship.procedures.map((step, index) => (
                   <li key={index}>{step}</li>
                 ))}
               </ol>
@@ -126,7 +166,7 @@ export function SingleScholarship() {
               <div>
                 <h3 className="text-lg font-semibold mb-2">Eligibility Criteria</h3>
                 <ul className="list-disc list-inside text-gray-700">
-                  {scholarship.eligibilityCriteria.map((criteria, index) => (
+                  {scholarship.scholarshipfor.map((criteria, index) => (
                     <li key={index}>{criteria}</li>
                   ))}
                 </ul>
@@ -170,16 +210,9 @@ export function SingleScholarship() {
             <ChecklistItem label="Letters of recommendation" isChecked={false} />
           </div> */}
           <DialogFooter className="sm:justify-start">
-            <Button
+          <Button
               type="button"
               variant="secondary"
-              onClick={() => setIsDialogOpen(false)}
-              className="mr-2"
-            >
-              Use Current Profile
-            </Button>
-            <Button
-              type="button"
               onClick={() => {
                 setIsDialogOpen(false)
                 // Redirect to profile update page
@@ -189,6 +222,14 @@ export function SingleScholarship() {
             >
               Update Profile
             </Button>
+            <Button
+              type="button"
+              onClick={() => handleSubmit()}
+              className="mr-2"
+            >
+              Use Current Profile
+            </Button>
+            
           </DialogFooter>
         </DialogContent>
       </Dialog>

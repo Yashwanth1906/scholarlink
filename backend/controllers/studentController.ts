@@ -2,10 +2,11 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt"
 
 import jwt from "jsonwebtoken"
+import { escape } from "querystring";
 const prisma=new PrismaClient();
 
 const createToken = (email:any)=>{
-    let token= jwt.sign({email},process.env.JWT_SECRET || "");
+    let token= jwt.sign({id:email},process.env.JWT_SECRET || "");
     return `Bearer ${token}`
 }
 
@@ -162,5 +163,98 @@ export const addDetails=async(req:any,res:any)=>{
     }
 
 }
+
+
+export const getScholarships=async(req:any,res:any)=>{
+    try{
+        const scholarships = await prisma.scholarship.findMany({
+            where: {
+              NOT: {
+                appliedScholarship: {
+                  some: {
+                    studentid: req.headers.id
+                  }
+                }
+              }
+            },
+            include: {
+              appliedScholarship: true 
+            }
+          });
+
+        return res.status(200).json({scholarships})
+
+    }
+    catch{
+        return res.status(500).json({msg:"error"})
+    }
+}
+
+
+export const getScholarship=async(req:any,res:any)=>
+{
+    try{
+        const id=parseInt(req.query.id);
+        const scholarship=await prisma.scholarship.findUnique({
+            where:{
+                id
+            },
+            include:{
+                admin:true
+            }
+        })
+        return res.status(200).json({scholarship})
+    }
+    catch{
+        return res.status(500).json({msg:"error"})
+
+
+    }
+}
+
+export const applyScholarship=async(req:any,res:any)=>{
+    try{
+        const id=parseInt(req.query.id);
+        await prisma.scholarshipApplied.create({
+            data:{
+                studentid:req.headers.id,
+                scholarshipid:id
+            }
+        })
+        return res.status(200).json({msg:"done"})
+    }
+    catch(err){
+        console.log(err)
+        return res.status(500).json({msg:'error'})
+    }
+}
+
+
+export const getProfile=async(req:any,res:any)=>{
+    try{
+        const id=req.headers.id;
+        const profile=await prisma.student.findUnique({
+            where:{
+                email:id
+            },
+            include:{
+                studentdetails:true,
+                secondarystudentDetails:true,
+                hscstudentdetails:true,
+                ugcollegestudentdetails:true,
+                pgcollegestudentdetails:true,
+                appliedscholarships:true
+            }
+        })
+        return res.status(200).json({profile})
+    }
+    catch{
+        return res.status(500).json({msg:"error"})
+    }
+
+
+}
+
+
 
 
