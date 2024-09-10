@@ -1,19 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { GraduationCap, CheckCircle, Clock, X } from 'lucide-react'
 import {Link, useNavigate} from "react-router-dom"
+import axios from 'axios'
+import { BACKEND_URL } from '../../config'
 
 
-const appliedScholarships = [
-  { id: 1, name: "STEM Excellence Scholarship", providedBy: "Bright Future Foundation", amount: 10000, deadline: "2023-12-31", field: "STEM", description: "For outstanding students pursuing degrees in Science, Technology, Engineering, or Mathematics.", status: "Pending" },
-  { id: 2, name: "Women in Tech Grant", providedBy: "TechForward Institute", amount: 7500, deadline: "2023-11-30", field: "Technology", description: "Supporting women pursuing careers in technology and computer science.", status: "Under Review" },
-  { id: 3, name: "Global Innovators Scholarship", providedBy: "World Education Fund", amount: 15000, deadline: "2024-01-15", field: "Innovation", description: "For students demonstrating exceptional innovation and creativity in their field of study.", status: "Pending" },
-]
 
 const bookmarkedScholarships = [
   { id: 4, name: "Environmental Leaders Fund", providedBy: "Green Earth Foundation", amount: 5000, deadline: "2024-02-28", field: "Environmental Science", description: "Supporting future leaders in environmental science and sustainability." },
@@ -21,16 +18,31 @@ const bookmarkedScholarships = [
   { id: 6, name: "Arts Diversity Scholarship", providedBy: "Creative Minds Institute", amount: 8000, deadline: "2024-01-31", field: "Arts", description: "Promoting diversity and inclusion in the arts and creative fields." },
 ]
 
-const completedScholarships = [
-  { id: 7, name: "Tech Innovators Award", providedBy: "Silicon Valley Foundation", amount: 20000, deadline: "2023-06-30", field: "Computer Science", description: "Recognizing outstanding achievements in technology innovation.", status: "Awarded" },
-  { id: 8, name: "Global Leadership Scholarship", providedBy: "International Education Alliance", amount: 18000, deadline: "2023-05-15", field: "International Relations", description: "For students demonstrating exceptional leadership potential in global affairs.", status: "Not Selected" },
-  { id: 9, name: "Sustainable Energy Fellowship", providedBy: "Clean Energy Institute", amount: 25000, deadline: "2023-07-31", field: "Renewable Energy", description: "Supporting research and innovation in sustainable energy solutions.", status: "Awarded" },
-]
+
 
 export function ScholarshipViewer() {
   const [activeTab, setActiveTab] = useState("applied")
   const [appliedScholarships, setAppliedScholarships]=useState([]);
   const [completedScholarships,setCompletedScholarships]=useState([]);
+  const [loading,setLoading]=useState<boolean>(true)
+
+  useEffect(()=>{
+    axios.get(`${BACKEND_URL}/api/student/scholarshipview`).then((data)=>{
+      setAppliedScholarships(data.data.applied)
+      setCompletedScholarships(data.data.completed)
+      setLoading(false)
+    })
+  },[])
+
+  if(loading)
+  {
+    return(
+      <>
+        loading...
+      </>
+    )
+  }
+
 
   return (
     <div className="min-h-screen w-screen  absolute top-0 left-0 right-0 bg-gradient-to-b from-purple-100 to-blue-200">
@@ -143,15 +155,15 @@ function ScholarshipCard({ scholarship, type }: { scholarship: any, type: 'appli
   return (
     <Card className="flex flex-col h-full bg-white overflow-hidden">
       <CardHeader className="pb-4">
-        <CardTitle className="text-2xl font-bold text-purple-600">{scholarship.name}</CardTitle>
-        <CardDescription className="text-gray-600">{scholarship.providedBy}</CardDescription>
+        <CardTitle className="text-2xl font-bold text-purple-600">{scholarship.scholarship.name}</CardTitle>
+        <CardDescription className="text-gray-600">{scholarship.scholarship.providedBy}</CardDescription>
       </CardHeader>
       <CardContent className="flex-grow flex flex-col justify-between">
         <div className="space-y-4">
-          <div className="text-4xl font-bold text-green-500">${scholarship.amount.toLocaleString()}</div>
-          <div className="text-gray-600">Deadline: {scholarship.deadline}</div>
-          <div className="text-purple-600 font-semibold">{scholarship.field}</div>
-          <p className="text-gray-700">{scholarship.description}</p>
+          <div className="text-4xl font-bold text-green-500">${scholarship.scholarship.amt}</div>
+          <div className="text-gray-600">Deadline: {scholarship.scholarship.regenddate}</div>
+          <div className="text-purple-600 font-semibold">{scholarship.scholarship.period +" "+"Years"}</div>
+          <p className="text-gray-700">{scholarship.scholarship.description}</p>
           {(type === 'applied' || type === 'completed') && (
             <div className={`flex items-center font-semibold ${getStatusColor(scholarship.status)}`}>
               {getStatusIcon(scholarship.status)}

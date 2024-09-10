@@ -350,8 +350,8 @@ export const scholarshipView=async(req:any,res:any)=>{
         console.log(req.headers.id +"  ***")
         const applied=await prisma.scholarshipApplied.findMany({
             where:{
-                studentid:req.headers.id,
-                status:"Pending"
+                studentid:"test1@gmail.com",
+                status:"pending"
             },
             include:{
                 scholarship:true,
@@ -361,7 +361,7 @@ export const scholarshipView=async(req:any,res:any)=>{
         const completed=await prisma.scholarshipApplied.findMany({
             where:{
                 studentid:req.headers.id,
-                status:"Completed"
+                status:"completed"
             }
         })
 
