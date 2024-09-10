@@ -69,7 +69,7 @@ catch(err){
 export const createScholarship = async(req:any,res:any)=>{
     try{
 
-    const {name,scholarshipfor,amt,regstdate,regenddate,description,procedures} =req.body;
+    const {name,scholarshipfor,amt,regstdate,regenddate,description,procedures,period} =req.body;
     console.log(req.body)
 
     const scholarship=await prisma.scholarship.create({
@@ -82,9 +82,8 @@ export const createScholarship = async(req:any,res:any)=>{
             regstdate,
             regenddate,
             description,
-            procedures
-
-
+            procedures,
+            period
         }
     })
     return res.status(200).json({msg:"done"})
