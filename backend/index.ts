@@ -16,8 +16,8 @@ app.use(cors())
 const BACKEND_PORT = process.env.PORT
 
 
-app.get("/test",async(req,res)=>{
-    await prisma.studentDetails.deleteMany({})
+app.delete("/test",async(req,res)=>{
+    await prisma.scholarshipApplied.deleteMany({})
     return res.send("done")
 
     

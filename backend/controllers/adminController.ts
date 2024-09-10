@@ -4,8 +4,8 @@ import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 
 
-const createToken = (id:any)=>{
-    let token= jwt.sign({id},process.env.JWT_SECRET || "student");
+const createToken = (email:any)=>{
+    let token= jwt.sign({id:email},process.env.JWT_SECRET || "student");
     return `Bearer ${token}`
 }
 
@@ -22,7 +22,7 @@ export const adminReg=async(req:any,res:any)=>{
                 orgname
             }
         })
-        const token=createToken(admin.id)
+        const token=createToken(admin.email)
 
         return res.status(200).json({token})
 
@@ -87,17 +87,45 @@ export const createScholarship = async(req:any,res:any)=>{
 
         }
     })
-
     return res.status(200).json({msg:"done"})
-
-
     }
     catch(err)
     {
         console.log(err)
         return res.status(500).json({msg:"eroor"})
     }
-    
-
 }
 
+export const registeredApplicants = async(req:any,res:any) =>{
+    try{
+        const {scholarshipId} = req.body;
+        const registered = await prisma.scholarshipApplied.findMany({
+            where:{
+                scholarshipid:scholarshipId
+            },select:{
+                student:{
+                    select:{
+                        name:true,
+                        email:true,
+                        studentdetails:{
+                            select:{
+                                currentQualifications:true,
+                                gender:true,
+                                annualIncome:true,
+                                dob:true,
+                                bonafide:true,
+                                incomecertificate:true,
+                                salaryslip:true,
+                                achievements:true
+                            }
+                        }
+                    }
+                }
+            }
+        })
+        res.status(200).json({students:registered})
+    }catch(err){
+        console.log(err);
+        res.status(500).json({message:err})
+    }
+}
