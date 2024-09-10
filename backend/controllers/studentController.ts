@@ -147,7 +147,6 @@ const uploadToS3 = async (file: Express.Multer.File, folder: string) => {
       const aadhaarCardUrl = req.files?.aadhaarCard ? await uploadToS3(req.files.aadhaarCard[0] as Express.Multer.File, 'documents') : null;
       const rationCardUrl = req.files?.rationCard ? await uploadToS3(req.files.rationCard[0] as Express.Multer.File, 'documents') : null;
       const firstGraduateUrl = req.files?.firstGraduate ? await uploadToS3(req.files.firstGraduate[0] as Express.Multer.File, 'documents') : null;
-  
       await prisma.$transaction(async (tx) => {
         await tx.studentDetails.create({
           data: {

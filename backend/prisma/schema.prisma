@@ -60,8 +60,6 @@ model SecondaryStudentDetails{
   annualcard String?
   grade Int
 }
-
-
 model HSCStudentDetails{
   id Int @id @default(autoincrement())
   emailId String
