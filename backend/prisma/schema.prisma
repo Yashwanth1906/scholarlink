@@ -20,25 +20,33 @@ model Student{
   ugcollegestudentdetails UGCollegeStudentDetails[]
   pgcollegestudentdetails  PGCollegeStudentDetails[]
   appliedscholarships ScholarshipApplied[]
-
+  blogs Blogs[]
 }
 
 
 model StudentDetails{
   id Int @id @default(autoincrement())
-  studemail String 
+  studemail String
+  fatherName String?
+  motherName String?
+  fatherOccupation String?
+  motherOccupation String?
+  gaurdianName String?
+  gaurdianOccupation String?
+  parentContactNo String
   student Student @relation(fields: [studemail],references: [email],onDelete: Cascade)
   currentQualifications String
   gender String
+  contactNo String
   annualIncome Int?
   dob String
+  firstGraduate String?
+  aadharCard String?
+  rationCard String?
   bonafide String?
   incomecertificate String?
   salaryslip String?
   achievements String[]
-  
-  
-
 }
 
 
@@ -48,11 +56,9 @@ model SecondaryStudentDetails{
   student Student @relation(fields: [emailId],references: [email],onDelete:Cascade)
   schoolname String
   schoollocation String
-  score  Float
-  annualScore String
+  score Float
   annualcard String?
   grade Int
-
 }
 
 
@@ -60,12 +66,12 @@ model HSCStudentDetails{
   id Int @id @default(autoincrement())
   emailId String
   student Student @relation(fields: [emailId],references: [email],onDelete:Cascade)
+  sscschoolname String
+  sscschoollocation String
   schoolname String
   schoollocation String
   sscgrade Float
   sscmarksheet String?
-
-
 }
 
 
@@ -75,17 +81,19 @@ model UGCollegeStudentDetails{
   student Student @relation(fields: [emailId],references: [email],onDelete:Cascade)
   degree String
   discipline String
+  sscschoolname String
+  sscschoollocation String
+  hscschoolname String
+  hscschoollocation String
   collegename String
   collegelocation String
   sscgrade Float
   sscmarksheet String?
   hscgrade Float
-  hscmarksheet String? 
+  hscmarksheet String?
   gpa Float
   styear Int
   endyear Int
-
-
 }
 
 
@@ -95,13 +103,22 @@ model PGCollegeStudentDetails{
   student Student @relation(fields: [emailId],references: [email],onDelete:Cascade)
   degree String
   discipline String
+  sscschoolname String
+  sscschoollocation String
+  hscschoolname String
+  hscschoollocation String
+  ugcollegename String
+  ugcollegelocation String
   collegename String
   collegelocation String
+  sscgrade Float
+  sscmarksheet String?
+  hscgrade Float
+  hscmarksheet String?
   ugcgpa Float
-  degreecertificate String?
+  ugdegreecertificate String?
   styear Int
   endyear Int
-
 }
 
 
@@ -123,36 +140,50 @@ model AdminDetails{
   yearsofservice Int?
   certificate String
   description String
-
-
-
 }
 
 model Scholarship{
   id Int @id @default(autoincrement())
   name String
   providedby Int
+  image String?
   admin Admin @relation(fields: [providedby],references: [id],onDelete: Cascade)
   scholarshipfor String[]
   likes Int
   amt Int
+  period Int
   regstdate String
   regenddate String
   description String
   procedures String[]
   appliedScholarship ScholarshipApplied[]
+  blogs Blogs[]
 }
 
 
 model ScholarshipApplied{
   id Int @id @default(autoincrement())
-  scholarshipid Int 
+  scholarshipid Int
   studentid String
+  scholarshipEssay String?
+  status String
   scholarship Scholarship @relation(fields: [scholarshipid],references: [id],onDelete: Cascade)
   student Student @relation(fields: [studentid],references: [email],onDelete: Cascade)
-
-
 }
+
+model Blogs{
+  id Int @id @default(autoincrement())
+  scholarshipId Int
+  scholarship Scholarship @relation(fields: [scholarshipId],references: [id])
+  studentId Int
+  student Student @relation(fields: [studentId],references: [id])
+  title String
+  shortDesc String
+  subtitle String[]
+  content String[]
+}
+
+
 
 // ["female","any","enginerr","any"]
 
