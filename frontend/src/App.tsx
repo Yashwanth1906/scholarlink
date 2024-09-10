@@ -7,6 +7,8 @@ import { SingleScholarship } from './pages/single-scholarship'
 import './App.css'
 import { StudentRegister } from './pages/studentRegister'
 import { StudLogin } from './pages/studentLogin'
+import { CreateBlogPost } from "./pages/create-blog-post"
+import{ScholarshipViewer} from './pages/scholarship-viewer'
 
 function App() {
   
@@ -20,9 +22,14 @@ function App() {
           <Route path="/student/scholarshiphome" element={< ScholarshipHome />}></Route>
           <Route path="/student/scholarships" element={< Scholarships/>}></Route>
           <Route path="/student/information" element={<StudentInformation />}></Route>
+
+          <Route path="/student/createblogpage" element={<CreateBlogPost />}></Route>
           <Route path="/student/scholarship" element={<SingleScholarship />}></Route>
-          <Route path="/student/myprofile" element={<MyProfile />}></Route>
+          <Route path="/student/appliedscholarship" element={<ScholarshipViewer/>}></Route>
+         
+
           
+
         </Routes>
       
       </BrowserRouter>
