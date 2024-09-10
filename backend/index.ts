@@ -17,7 +17,7 @@ const BACKEND_PORT = process.env.PORT
 
 
 app.delete("/test",async(req,res)=>{
-    await prisma.scholarshipApplied.deleteMany({})
+    await prisma.studentDetails.deleteMany({})
     return res.send("done")
 
     

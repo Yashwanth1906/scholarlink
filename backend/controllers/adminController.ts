@@ -68,22 +68,23 @@ catch(err){
 
 export const createScholarship = async(req:any,res:any)=>{
     try{
-
-    const {name,scholarshipfor,amt,regstdate,regenddate,description,procedures,period} =req.body;
-    console.log(req.body)
+        console.log(req.body)
+    const {name,gender,annualIncome,studentType,community,prizeAmount,duration,regStartDate,regEndDate,description,procedures} =req.body;
+    let scholarshipfor=[gender,annualIncome,studentType,community]
+    
 
     const scholarship=await prisma.scholarship.create({
         data:{
             name,
-            providedby:"test@gmail.com",
+            providedby:"tata@gmail.com",
             scholarshipfor,
             likes:0,
-            amt,
-            regstdate,
-            regenddate,
+            amt:parseInt(prizeAmount),
+            regstdate:regStartDate,
+            regenddate:regEndDate,
             description,
             procedures,
-            period
+            period:parseInt(duration)
         }
     })
     return res.status(200).json({msg:"done"})
@@ -126,5 +127,47 @@ export const registeredApplicants = async(req:any,res:any) =>{
     }catch(err){
         console.log(err);
         res.status(500).json({message:err})
+    }
+}
+
+export const showOngoingScholarships=async(req:any,res:any)=>{
+    try{
+        const scholarships=await prisma.scholarship.findMany({
+            where:{
+                providedby:"tata@gmail.com",
+                regstdate:{lte:new Date().toISOString().substring(0,10)},
+                regenddate:{gte:new Date().toISOString().substring(0,10)}
+            },
+            include:{
+                appliedScholarship:true
+            }
+        })
+
+        return res.status(200).json({scholarships})
+    }
+    catch(err)
+    {
+        return res.status(500).json({msg:"error"})
+    }
+}
+
+export const showCompletedScholarships=async(req:any,res:any)=>{
+    try{
+        const scholarships=await prisma.scholarship.findMany({
+            where:{
+                providedby:"tata@gmail.com",
+
+                regenddate:{lt:new Date().toISOString().substring(0,10)}
+            },
+            include:{
+                appliedScholarship:true
+            }
+        })
+
+        return res.status(200).json({scholarships})
+    }
+    catch(err)
+    {
+        return res.status(500).json({msg:"error"})
     }
 }

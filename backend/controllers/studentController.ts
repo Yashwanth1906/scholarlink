@@ -324,7 +324,7 @@ export const applyScholarship=async(req:any,res:any)=>{
         console.log(req.headers.id)
         await prisma.scholarshipApplied.create({
             data:{
-                studentid:req.headers.id,
+                studentid:"test1@gmail.com",
                 scholarshipid:id,
                 status:"pending",
                 scholarshipEssay:req.body.bestFit

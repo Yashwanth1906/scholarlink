@@ -157,6 +157,7 @@ model Scholarship{
   procedures String[]
   appliedScholarship ScholarshipApplied[]
   blogs Blogs[]
+  completed Boolean @default(false)
 }
 
 
