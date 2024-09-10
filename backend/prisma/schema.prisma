@@ -19,6 +19,7 @@ model Student{
   hscstudentdetails HSCStudentDetails[]
   ugcollegestudentdetails UGCollegeStudentDetails[]
   pgcollegestudentdetails  PGCollegeStudentDetails[]
+  appliedscholarships ScholarshipApplied[]
 
 }
 
@@ -132,13 +133,23 @@ model Scholarship{
   name String
   providedby Int
   admin Admin @relation(fields: [providedby],references: [id],onDelete: Cascade)
-  for String[]
+  scholarshipfor String[]
   likes Int
   amt Int
   regstdate String
   regenddate String
   description String
   procedures String[]
+  appliedScholarship ScholarshipApplied[]
+}
+
+
+model ScholarshipApplied{
+  id Int @id @default(autoincrement())
+  scholarshipid Int 
+  studentid String
+  scholarship Scholarship @relation(fields: [scholarshipid],references: [id],onDelete: Cascade)
+  student Student @relation(fields: [studentid],references: [email],onDelete: Cascade)
 
 
 }
