@@ -1,4 +1,4 @@
-'use client'
+
 
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
@@ -15,10 +15,11 @@ type scholarhsips=
   {
     "id": number,
     "name": string,
-    "providedby": number,
+    "providedby": string,
     "scholarshipfor": string[],
     "likes": number,
     "amt": number,
+    "period":number
     "regstdate": string,
     "regenddate": string,
     "description": string,
@@ -34,10 +35,9 @@ type scholarhsips=
 
 
 export function Scholarships() {
-  // const [searchTerm, setSearchTerm] = useState('')
-  // const [fieldFilter, setFieldFilter] = useState('')
-  // const [isMenuOpen, setIsMenuOpen] = useState(false)
+
   const [scholarships,setScholarships]=useState<scholarhsips>([]);
+  const [loading,setLoading]=useState<boolean>(true);
   const navigate =useNavigate();
 
   useEffect(()=>{
@@ -48,11 +48,21 @@ export function Scholarships() {
     }).then((data)=>{
       console.log(data.data)
       setScholarships(data.data.scholarships)
+      setLoading(false)
 
     })
 
 
   },[])
+
+  if(loading)
+  {
+    return(
+      <>
+      Loading...
+      </>
+    )
+  }
 
   // const filteredScholarships = scholarships.filter(scholarship => 
   //   scholarship.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
@@ -144,7 +154,7 @@ export function Scholarships() {
               <CardContent className="pt-4">
                 <p className="text-lg font-semibold text-green-600 mb-2">{scholarship.amt}</p>
                 <p className="text-sm text-gray-600 mb-2">Deadline: {scholarship.regenddate}</p>
-                {/* <p className="text-sm text-purple-600 mb-4">{scholarship.field}</p> */}
+                <p className="text-sm text-purple-600 mb-4">{scholarship.period +"  Years"}</p>
                 <p className="text-sm text-gray-700 mb-4">{scholarship.description}</p>
                 <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white" onClick={()=>{
                   navigate(`/student/scholarship?id=${scholarship.id}`)
