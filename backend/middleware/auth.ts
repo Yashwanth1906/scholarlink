@@ -8,9 +8,8 @@ export const authMiddleware=async(req:any,res:any,next:any)=>{
     console.log(token)
     try{
         const data=jwt.verify(token,"student") ;
-        console.log(data)
-        //@ts-ignore
-        req.headers.id=data.id 
+        console.log(data);
+        req.headers.email=data.id;
         return next();
     }
     catch(err){

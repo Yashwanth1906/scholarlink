@@ -250,7 +250,7 @@ const DocumentsCard = ({ updateProfileData }) => (
       <CardTitle className="text-xl font-bold">Documents</CardTitle>
     </CardHeader>
     <CardContent className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-      <FileUpload label="Aadhar Card" name="aadharCard" onChange={updateProfileData} />
+      <FileUpload label="Aadhar Card" name="aadhaarCard" onChange={updateProfileData} />
       <FileUpload label="Ration Card" name="rationCard" onChange={updateProfileData} />
       <FileUpload label="Bonafide Certificate" name="bonafide" onChange={updateProfileData} />
       <FileUpload label="Income Certificate" name="incomeCertificate" onChange={updateProfileData} />
@@ -299,12 +299,12 @@ export function StudentInformation() {
     ugDegreeCertificate: null,
     stYear: '',
     endYear: '',
-    aadharCard: null,
+    aadhaarCard: null,
     rationCard: null,
     bonafide: null,
     incomeCertificate: null,
     salarySlip: null,
-  })
+  });
 
   const updateProfileData = (name, value) => {
     setProfileData(prevData => ({
@@ -332,16 +332,18 @@ export function StudentInformation() {
     console.log(profileData)
     try {
       const formData = new FormData()
+      profileData.achievements.forEach((achievement, index) => {
+        formData.append(`achievements[${index}]`, achievement); 
+      });
       for (const key in profileData) {
-        if (profileData[key] instanceof File) {
-          formData.append(key, profileData[key])
-        } else if (Array.isArray(profileData[key])) {
-          formData.append(key, JSON.stringify(profileData[key]))
-        } else {
-          formData.append(key, profileData[key])
+        if (key !== 'achievements') {  // Skip 'achievements' as it's handled separately
+          if (profileData[key] instanceof File) {
+            formData.append(key, profileData[key]);
+          } else {
+            formData.append(key, profileData[key]);
+          }
         }
       }
-      console
 
       const res = await axios.post(`${BACKEND_URL}/api/student/addinformation`, formData, {
         headers: {
