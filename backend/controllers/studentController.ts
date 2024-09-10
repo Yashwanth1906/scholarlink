@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt"
+import { S3Client, PutObjectCommand,GetObjectCommand } from "@aws-sdk/client-s3";
+import multer from 'multer';
 
 import jwt from "jsonwebtoken"
 const prisma=new PrismaClient();
@@ -64,9 +66,53 @@ export const studentLogin=async(req:any,res:any)=>{
     
 }
 
+const bucket_name = process.env.BUCKET_NAME;
+const bucket_region = process.env.BUCKET_REGION;
+const access_key = process.env.ACCESS_KEY;
+const secret_key = process.env.SECRET_ACCESS_KEY;
+
+if (!bucket_name || !bucket_region || !access_key || !secret_key) {
+  throw new Error("Missing environment variables");
+}
+
+const s3Client = new S3Client({
+  region: bucket_region,
+  credentials: {
+    accessKeyId: access_key,
+    secretAccessKey: secret_key,
+  },
+});
+const upload = multer({ storage: multer.memoryStorage() });
 
 
-export const addDetails=async(req:any,res:any)=>{
+const uploadToS3 = async (file: Express.Multer.File, folder: string) => {
+    const params = {
+      Bucket: bucket_name,
+      Key: `${folder}/${file.originalname}`,
+      Body: file.buffer,
+      ContentType: file.mimetype,
+    };
+    try {
+      const command = new PutObjectCommand(params);
+      await s3Client.send(command);
+      return `https://${bucket_name}.s3.${bucket_region}.amazonaws.com/${folder}/${file.originalname}`;
+    } catch (err) {
+      console.log("S3 upload error:", err);
+      throw new Error("Error uploading file to S3");
+    }
+  };
+
+export const addDetails=[
+    upload.fields([
+        { name: 'bonafide', maxCount: 1 },
+        { name: 'incomecertificate', maxCount: 1 },
+        { name: 'salaryslip', maxCount: 1 },
+        { name: 'annualCard', maxCount: 1 }, 
+        { name: 'sscMarksheet', maxCount: 1 },
+        { name: 'hscMarksheet', maxCount: 1 },
+        { name: 'ugDegreeCertificate', maxCount: 1 },
+      ]),    
+    async(req:any,res:any)=>{
     try{
         console.log(req.body)
         console.log(req.headers)
@@ -160,8 +206,7 @@ export const addDetails=async(req:any,res:any)=>{
         console.log(err)
         return res.status(500).json({msg:"error"})
     }
-
-}
+}];
 
 
 export const getScholarships=async(req:any,res:any)=>{
@@ -250,8 +295,6 @@ export const getProfile=async(req:any,res:any)=>{
     catch{
         return res.status(500).json({msg:"error"})
     }
-
-
 }
 
 
