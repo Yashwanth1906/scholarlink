@@ -61,7 +61,7 @@ export const studentLogin=async(req:any,res:any)=>{
     }
     catch(err){
         console.log(err)
-        return res.status(500).json({msg:"errors"})
+        return res.status(500).json({msg:err})
     }
     
 }
@@ -102,112 +102,152 @@ const uploadToS3 = async (file: Express.Multer.File, folder: string) => {
     }
   };
 
-export const addDetails=[
-    upload.fields([
-        { name: 'bonafide', maxCount: 1 },
-        { name: 'incomecertificate', maxCount: 1 },
-        { name: 'salaryslip', maxCount: 1 },
-        { name: 'annualCard', maxCount: 1 }, 
-        { name: 'sscMarksheet', maxCount: 1 },
-        { name: 'hscMarksheet', maxCount: 1 },
-        { name: 'ugDegreeCertificate', maxCount: 1 },
-      ]),    
-    async(req:any,res:any)=>{
-    try{
-        console.log(req.body)
-        console.log(req.headers)
-        const {studentType,dob,annualIncome,schoolName,schoolLocation,score,annualScore,grade,hscSchoolName,hscSchoolLocation,sscGrade,degree,discipline,collegeName,collegeLocation,gpa,hscGrade,ugcgpa,startYear,endYear,gender,achievements}=req.body.formData
-        await prisma.$transaction(async(tx)=>{
-            await tx.studentDetails.create({
-                data:{
-                    studemail:req.headers.email,
-                    currentQualifications:studentType,
-                    gender,
-                    annualIncome:parseInt(annualIncome),
-                    dob,
-                    achievements
-
-                }
-            })
-
-
-            if(studentType==="Secondary")
-            {
-              
-                await tx.secondaryStudentDetails.create({
-                    data:{
-                        emailId:req.headers.email,
-                        schoolname:schoolName,
-                        schoollocation:schoolLocation,
-                        score:parseFloat(score),
-                        annualScore,
-                        grade
-                    }
-                })
-            }
-            else if(studentType==="HSC")
-            {
-                
-                await tx.hSCStudentDetails.create({
-                    data:{
-                        emailId:req.headers.email,
-                        schoolname:hscSchoolName,
-                        schoollocation:hscSchoolLocation,
-                        sscgrade:parseFloat(sscGrade),
-                 
-                    }
-                })
-            }
-            else if(studentType==="Unergraduate")
-            {   
-
-                await tx.uGCollegeStudentDetails.create({
-                    data:{
-                        emailId:req.headers.email,
-                        degree,
-                        discipline,
-                        collegename:collegeName,
-                        collegelocation:collegeLocation,
-                        sscgrade:parseFloat(sscGrade),
-                        hscgrade:parseFloat(hscGrade),
-                        gpa,
-                        styear:parseInt(startYear),
-                        endyear:parseInt(endYear)
-                    }
-                })
-
-
-
-
-            }
-            else if(studentType==="Postgraduate")
-            {   
-               
-                await tx.pGCollegeStudentDetails.create({
-                    data:{
-                        emailId:req.headers.email,
-                        degree,
-                        discipline,
-                        collegename:collegeName,
-                        collegelocation:collegeLocation,
-                        ugcgpa,
-                        styear:parseInt(startYear),
-                        endyear:parseInt(endYear)
-                    }
-                })
-            }
-        })
-        
-        return res.status(200).json({msg:"done"})
-        
-
+  export const addDetails = async (req: any, res: any): Promise<Response> => {
+    try {
+      const formData = req.body.formData || {};
+      const {
+        studentType,
+        dob,
+        annualIncome,
+        schoolName,
+        schoolLocation,
+        score,
+        grade,
+        sscGrade,
+        degree,
+        discipline,
+        gpa,
+        hscGrade,
+        ugcgpa,
+        startYear,
+        endYear,
+        gender,
+        achievements,
+        fatherName,
+        motherName,
+        fatherOccupation,
+        motherOccupation,
+        guardianName,
+        guardianOccupation,
+        parentContactNo,
+        contactNo,
+        sscschoolname,sscschoolloation,hscschoolname,hscschoollocation,
+        ugcollegename,ugcollegelocation,pgcollegename,pgcollegelocation
+      } = formData;
+  
+      // Upload files to S3
+      const bonafideUrl = req.files?.bonafide ? await uploadToS3(req.files.bonafide[0] as Express.Multer.File, 'documents') : null;
+      const incomeCertificateUrl = req.files?.incomecertificate ? await uploadToS3(req.files.incomecertificate[0] as Express.Multer.File, 'documents') : null;
+      const salarySlipUrl = req.files?.salaryslip ? await uploadToS3(req.files.salaryslip[0] as Express.Multer.File, 'documents') : null;
+      const annualCardUrl = req.files?.annualCard ? await uploadToS3(req.files.annualCard[0] as Express.Multer.File, 'documents') : null;
+      const sscMarksheetUrl = req.files?.sscMarksheet ? await uploadToS3(req.files.sscMarksheet[0] as Express.Multer.File, 'documents') : null;
+      const hscMarksheetUrl = req.files?.hscMarksheet ? await uploadToS3(req.files.hscMarksheet[0] as Express.Multer.File, 'documents') : null;
+      const ugDegreeCertificateUrl = req.files?.ugDegreeCertificate ? await uploadToS3(req.files.ugDegreeCertificate[0] as Express.Multer.File, 'documents') : null;
+      const aadhaarCardUrl = req.files?.aadhaarCard ? await uploadToS3(req.files.aadhaarCard[0] as Express.Multer.File, 'documents') : null;
+      const rationCardUrl = req.files?.rationCard ? await uploadToS3(req.files.rationCard[0] as Express.Multer.File, 'documents') : null;
+      const firstGraduateUrl = req.files?.firstGraduate ? await uploadToS3(req.files.firstGraduate[0] as Express.Multer.File, 'documents') : null;
+  
+      await prisma.$transaction(async (tx) => {
+        await tx.studentDetails.create({
+          data: {
+            studemail: req.headers.email as string,
+            currentQualifications: studentType,
+            gender,
+            annualIncome: parseInt(annualIncome, 10),
+            dob,
+            achievements,
+            fatherName: fatherName || null,
+            motherName: motherName || null,
+            fatherOccupation: fatherOccupation || null,
+            motherOccupation: motherOccupation || null,
+            gaurdianName: guardianName || null,
+            gaurdianOccupation: guardianOccupation || null,
+            parentContactNo: parentContactNo,
+            contactNo: contactNo,
+            aadharCard: aadhaarCardUrl,
+            rationCard: rationCardUrl,
+            firstGraduate: firstGraduateUrl,
+            bonafide: bonafideUrl,
+            incomecertificate: incomeCertificateUrl,
+            salaryslip: salarySlipUrl,
+          },
+        });
+  
+        if (studentType === 'Secondary') {
+          await tx.secondaryStudentDetails.create({
+            data: {
+              emailId: req.headers.email as string,
+              schoolname: schoolName,
+              schoollocation: schoolLocation,
+              score: parseFloat(score),
+              grade,
+              annualcard: annualCardUrl,
+            },
+          });
+        } else if (studentType === 'HSC') {
+          await tx.hSCStudentDetails.create({
+            data: {
+              emailId: req.headers.email as string,
+              sscschoolname: sscschoolname,
+              sscschoollocation:sscschoolloation,
+              schoolname: hscschoolname,
+              schoollocation: hscschoollocation,
+              sscgrade: parseFloat(sscGrade),
+              sscmarksheet: sscMarksheetUrl,
+            },
+          });
+        } else if (studentType === 'Undergraduate') {
+          await tx.uGCollegeStudentDetails.create({
+            data: {
+              emailId: req.headers.email as string,
+              degree,
+              discipline,
+              sscschoolname:sscschoolname,
+              sscschoollocation:sscschoolloation,
+              hscschoolname:hscschoolname,
+              hscschoollocation:hscschoollocation,
+              collegename: ugcollegename,
+              collegelocation: ugcollegelocation,
+              sscgrade: parseFloat(sscGrade),
+              sscmarksheet: sscMarksheetUrl,
+              hscgrade: parseFloat(hscGrade),
+              hscmarksheet: hscMarksheetUrl,
+              gpa,
+              styear: parseInt(startYear, 10),
+              endyear: parseInt(endYear, 10),
+            },
+          });
+        } else if (studentType === 'Postgraduate') {
+          await tx.pGCollegeStudentDetails.create({
+            data: {
+              emailId: req.headers.email as string,
+              degree,
+              discipline,
+              sscschoolname:sscschoolname,
+              sscschoollocation:sscschoolloation,
+              hscschoolname:hscschoolname,
+              hscschoollocation:hscschoollocation,
+              ugcollegename:ugcollegename,
+              ugcollegelocation:ugcollegelocation,
+              collegename: pgcollegename,
+              collegelocation: pgcollegelocation,
+              hscgrade:hscGrade,
+              sscgrade:sscGrade,
+              ugcgpa,
+              styear: parseInt(startYear, 10),
+              endyear: parseInt(endYear, 10),
+              ugdegreecertificate: ugDegreeCertificateUrl,
+            },
+          });
+        }
+      });
+  
+      return res.status(200).json({ msg: 'done' });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({ msg: 'error' });
     }
-    catch(err){
-        console.log(err)
-        return res.status(500).json({msg:"error"})
-    }
-}];
-
+  };
 
 export const getScholarships=async(req:any,res:any)=>{
     try{
@@ -262,7 +302,8 @@ export const applyScholarship=async(req:any,res:any)=>{
         await prisma.scholarshipApplied.create({
             data:{
                 studentid:req.headers.id,
-                scholarshipid:id
+                scholarshipid:id,
+                status:"pending"
             }
         })
         return res.status(200).json({msg:"done"})
