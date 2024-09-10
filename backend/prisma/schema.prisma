@@ -146,9 +146,9 @@ model AdminDetails{
 model Scholarship{
   id Int @id @default(autoincrement())
   name String
-  providedby Int
+  providedby String
   image String?
-  admin Admin @relation(fields: [providedby],references: [id],onDelete: Cascade)
+  admin Admin @relation(fields: [providedby],references: [email],onDelete: Cascade)
   scholarshipfor String[]
   likes Int
   amt Int
