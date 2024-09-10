@@ -2,7 +2,6 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt"
 
 import jwt from "jsonwebtoken"
-import { escape } from "querystring";
 const prisma=new PrismaClient();
 
 const createToken = (email:any)=>{

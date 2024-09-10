@@ -22,10 +22,10 @@ function App() {
           <Route path="/student/scholarshiphome" element={< ScholarshipHome />}></Route>
           <Route path="/student/scholarships" element={< Scholarships/>}></Route>
           <Route path="/student/information" element={<StudentInformation />}></Route>
-
-          <Route path="/student/createblogpage" element={<CreateBlogPost />}></Route>
+          <Route path="/student/createblog" element={<CreateBlogPost />}></Route>
           <Route path="/student/scholarship" element={<SingleScholarship />}></Route>
           <Route path="/student/appliedscholarship" element={<ScholarshipViewer/>}></Route>
+          <Route path="/student/myprofile" element={<MyProfile/>}></Route>
          
 
           
