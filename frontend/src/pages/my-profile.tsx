@@ -4,13 +4,13 @@ import { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { GraduationCap, User, Mail, Calendar, Award, School, Edit, Trash, Plus, Save, X, Camera, DollarSign, FileText, Download, Upload, MapPin } from 'lucide-react'
-import {Link, useNavigate} from "react-router-dom"
+import {Link} from "react-router-dom"
 
 // Mock student data
 const initialStudentData = {

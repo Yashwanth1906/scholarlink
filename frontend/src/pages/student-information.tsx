@@ -1,405 +1,380 @@
 'use client'
 
-import { useState } from 'react'
-import { motion } from 'framer-motion'
+import React, { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { GraduationCap, User, Calendar, MapPin, Upload, FileText, DollarSign, Menu, Plus, X } from 'lucide-react'
-import {Link, useNavigate} from "react-router-dom"
+import { User, Mail, Phone, Calendar, DollarSign, GraduationCap, School, MapPin, FileText, Upload, Award, Plus, X } from 'lucide-react'
 import axios from 'axios'
 import { BACKEND_URL } from '../../config'
 
-export  function StudentInformation() {
-  const [studentType, setStudentType] = useState('Secondary')
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [formData, setFormData] = useState({
+const InputField = ({ label, name, icon, type = "text", value, onChange }) => {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={name} className="text-sm font-medium text-gray-700 flex items-center gap-2">
+        {icon}
+        {label}
+      </Label>
+      <Input
+        type={type}
+        id={name}
+        name={name}
+        value={value}
+        onChange={(e) => onChange(name, e.target.value)}
+        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+      />
+    </div>
+  )
+}
+
+const SelectField = ({ label, name, icon, options, value, onChange }) => {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={name} className="text-sm font-medium text-gray-700 flex items-center gap-2">
+        {icon}
+        {label}
+      </Label>
+      <Select value={value} onValueChange={(value) => onChange(name, value)}>
+        <SelectTrigger className="w-full">
+          <SelectValue placeholder={`Select ${label}`} />
+        </SelectTrigger>
+        <SelectContent>
+          {options.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  )
+}
+
+const FileUpload = ({ label, name, onChange }) => {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={name} className="text-sm font-medium text-gray-700 flex items-center gap-2">
+        <Upload className="w-4 h-4" />
+        {label}
+      </Label>
+      <Input
+        type="file"
+        id={name}
+        name={name}
+        onChange={(e) => onChange(name, e.target.files[0])}
+        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+      />
+    </div>
+  )
+}
+
+const PersonalInfoCard = ({ profileData, updateProfileData, addAchievement, removeAchievement }) => (
+  <Card className="mb-6">
+    <CardHeader className="bg-purple-600 text-white">
+      <CardTitle className="text-xl font-bold">Personal Information</CardTitle>
+    </CardHeader>
+    <CardContent className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <SelectField
+        label="Community"
+        name="community"
+        icon={<User className="w-4 h-4" />}
+        options={[
+          { value: 'general', label: 'General' },
+          { value: 'obc', label: 'OBC' },
+          { value: 'sc', label: 'SC' },
+          { value: 'st', label: 'ST' },
+          { value: 'other', label: 'Other' },
+        ]}
+        value={profileData.community}
+        onChange={updateProfileData}
+      />
+      <InputField label="Father's Name" name="fatherName" icon={<User className="w-4 h-4" />} value={profileData.fatherName} onChange={updateProfileData} />
+      <InputField label="Mother's Name" name="motherName" icon={<User className="w-4 h-4" />} value={profileData.motherName} onChange={updateProfileData} />
+      <InputField label="Father's Occupation" name="fatherOccupation" icon={<User className="w-4 h-4" />} value={profileData.fatherOccupation} onChange={updateProfileData} />
+      <InputField label="Mother's Occupation" name="motherOccupation" icon={<User className="w-4 h-4" />} value={profileData.motherOccupation} onChange={updateProfileData} />
+      <InputField label="Guardian's Name" name="gaurdianName" icon={<User className="w-4 h-4" />} value={profileData.gaurdianName} onChange={updateProfileData} />
+      <InputField label="Guardian's Occupation" name="gaurdianOccupation" icon={<User className="w-4 h-4" />} value={profileData.gaurdianOccupation} onChange={updateProfileData} />
+      <InputField label="Parent Contact No" name="parentContactNo" icon={<Phone className="w-4 h-4" />} value={profileData.parentContactNo} onChange={updateProfileData} />
+      <SelectField
+        label="Student Type"
+        name="studenttype"
+        icon={<GraduationCap className="w-4 h-4" />}
+        options={[
+          { value: 'secondary', label: 'Secondary' },
+          { value: 'higher_secondary', label: 'HSC' },
+          { value: 'undergraduate', label: 'Undergraduate' },
+          { value: 'postgraduate', label: 'Postgraduate' },
+        ]}
+        value={profileData.studenttype}
+        onChange={updateProfileData}
+      />
+      <SelectField
+        label="Gender"
+        name="gender"
+        icon={<User className="w-4 h-4" />}
+        options={[
+          { value: 'male', label: 'Male' },
+          { value: 'female', label: 'Female' },
+          { value: 'other', label: 'Other' },
+        ]}
+        value={profileData.gender}
+        onChange={updateProfileData}
+      />
+      <InputField label="Contact No" name="contactNo" icon={<Phone className="w-4 h-4" />} value={profileData.contactNo} onChange={updateProfileData} />
+      <InputField label="Annual Income" name="annualIncome" icon={<DollarSign className="w-4 h-4" />} type="number" value={profileData.annualIncome} onChange={updateProfileData} />
+      <InputField label="Date of Birth" name="dob" icon={<Calendar className="w-4 h-4" />} type="date" value={profileData.dob} onChange={updateProfileData} />
+      <FileUpload label="First Graduate Certificate" name="firstGraduateCertificate" onChange={updateProfileData} />
+      <div className="col-span-2">
+        <Label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-2">
+          <Award className="w-4 h-4" />
+          Achievements
+        </Label>
+        {profileData.achievements.map((achievement, index) => (
+          <div key={index} className="flex items-center mb-2">
+            <Input
+              value={achievement}
+              onChange={(e) => updateProfileData('achievements', profileData.achievements.map((a, i) => i === index ? e.target.value : a))}
+              className="flex-grow mr-2"
+            />
+            <Button
+              onClick={() => removeAchievement(index)}
+              variant="ghost"
+              size="icon"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        ))}
+        <Button
+          onClick={addAchievement}
+          variant="outline"
+          className="mt-2"
+        >
+          <Plus className="h-4 w-4 mr-2" /> Add Achievement
+        </Button>
+      </div>
+    </CardContent>
+  </Card>
+)
+
+const SecondaryEducationCard = ({ profileData, updateProfileData }) => (
+  <Card className="mb-6">
+    <CardHeader className="bg-purple-600 text-white">
+      <CardTitle className="text-xl font-bold">Secondary Education</CardTitle>
+    </CardHeader>
+    <CardContent className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <InputField label="School Name" name="schoolname" icon={<School className="w-4 h-4" />} value={profileData.schoolname} onChange={updateProfileData} />
+      <InputField label="School Location" name="schoollocation" icon={<MapPin className="w-4 h-4" />} value={profileData.schoollocation} onChange={updateProfileData} />
+      <InputField label="Score" name="score" icon={<FileText className="w-4 h-4" />} value={profileData.score} onChange={updateProfileData} />
+      <FileUpload label="Annual Card" name="annualCard" onChange={updateProfileData} />
+    </CardContent>
+  </Card>
+)
+
+const HigherSecondaryEducationCard = ({ profileData, updateProfileData }) => (
+  <Card className="mb-6">
+    <CardHeader className="bg-purple-600 text-white">
+      <CardTitle className="text-xl font-bold">Higher Secondary Education</CardTitle>
+    </CardHeader>
+    <CardContent className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <InputField label="SSC School Name" name="sscSchoolName" icon={<School className="w-4 h-4" />} value={profileData.sscSchoolName} onChange={updateProfileData} />
+      <InputField label="SSC School Location" name="sscSchoolLocation" icon={<MapPin className="w-4 h-4" />} value={profileData.sscSchoolLocation} onChange={updateProfileData} />
+      <InputField label="HSC School Name" name="hscSchoolName" icon={<School className="w-4 h-4" />} value={profileData.hscSchoolName} onChange={updateProfileData} />
+      <InputField label="HSC School Location" name="hscSchoolLocation" icon={<MapPin className="w-4 h-4" />} value={profileData.hscSchoolLocation} onChange={updateProfileData} />
+      <InputField label="SSC Grade" name="sscGrade" icon={<FileText className="w-4 h-4" />} value={profileData.sscGrade} onChange={updateProfileData} />
+      <FileUpload label="SSC Marksheet" name="sscMarksheet" onChange={updateProfileData} />
+      <InputField label="HSC Grade" name="hscGrade" icon={<FileText className="w-4 h-4" />} value={profileData.hscGrade} onChange={updateProfileData} />
+      <FileUpload label="HSC Marksheet" name="hscMarksheet" onChange={updateProfileData} />
+    </CardContent>
+  </Card>
+)
+
+const UndergraduateEducationCard = ({ profileData, updateProfileData }) => (
+  <Card className="mb-6">
+    <CardHeader className="bg-purple-600 text-white">
+      <CardTitle className="text-xl font-bold">Undergraduate Education</CardTitle>
+    </CardHeader>
+    <CardContent className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <InputField label="Degree" name="degree" icon={<GraduationCap className="w-4 h-4" />} value={profileData.degree} onChange={updateProfileData} />
+      <InputField label="Discipline" name="discipline" icon={<GraduationCap className="w-4 h-4" />} value={profileData.discipline} onChange={updateProfileData} />
+      <InputField label="SSC School Name" name="sscSchoolName" icon={<School className="w-4 h-4" />} value={profileData.sscSchoolName} onChange={updateProfileData} />
+      <InputField label="SSC School Location" name="sscSchoolLocation" icon={<MapPin className="w-4 h-4" />} value={profileData.sscSchoolLocation} onChange={updateProfileData} />
+      <InputField label="HSC School Name" name="hscSchoolName" icon={<School className="w-4 h-4" />} value={profileData.hscSchoolName} onChange={updateProfileData} />
+      <InputField label="HSC School Location" name="hscSchoolLocation" icon={<MapPin className="w-4 h-4" />} value={profileData.hscSchoolLocation} onChange={updateProfileData} />
+      <InputField label="UG College Name" name="ugCollegeName" icon={<School className="w-4 h-4" />} value={profileData.ugCollegeName} onChange={updateProfileData} />
+      <InputField label="UG College Location" name="ugCollegeLocation" icon={<MapPin className="w-4 h-4" />} value={profileData.ugCollegeLocation} onChange={updateProfileData} />
+      <InputField label="SSC Grade" name="sscGrade" icon={<FileText className="w-4 h-4" />} value={profileData.sscGrade} onChange={updateProfileData} />
+      <FileUpload label="SSC Marksheet" name="sscMarksheet" onChange={updateProfileData} />
+      <InputField label="HSC Grade" name="hscGrade" icon={<FileText className="w-4 h-4" />} value={profileData.hscGrade} onChange={updateProfileData} />
+      <FileUpload label="HSC Marksheet" name="hscMarksheet" onChange={updateProfileData} />
+      <InputField label="GPA" name="gpa" icon={<FileText className="w-4 h-4" />} value={profileData.gpa} onChange={updateProfileData} />
+      <InputField label="Start Year" name="stYear" icon={<Calendar className="w-4 h-4" />} value={profileData.stYear} onChange={updateProfileData} />
+      <InputField label="End Year" name="endYear" icon={<Calendar className="w-4 h-4" />} value={profileData.endYear} onChange={updateProfileData} />
+    </CardContent>
+  </Card>
+)
+
+const PostgraduateEducationCard = ({ profileData, updateProfileData }) => (
+  <Card className="mb-6">
+    <CardHeader className="bg-purple-600 text-white">
+      <CardTitle className="text-xl font-bold">Postgraduate Education</CardTitle>
+    </CardHeader>
+    <CardContent className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <InputField label="Degree" name="degree" icon={<GraduationCap className="w-4 h-4" />} value={profileData.degree} onChange={updateProfileData} />
+      <InputField label="Discipline" name="discipline" icon={<GraduationCap className="w-4 h-4" />} value={profileData.discipline} onChange={updateProfileData} />
+      <InputField label="SSC School Name" name="sscSchoolName" icon={<School className="w-4 h-4" />} value={profileData.sscSchoolName} onChange={updateProfileData} />
+      <InputField label="SS School Location" name="sscSchoolLocation" icon={<MapPin className="w-4 h-4" />} value={profileData.sscSchoolLocation} onChange={updateProfileData} />
+      <InputField label="HSC School Name" name="hscSchoolName" icon={<School className="w-4 h-4" />} value={profileData.hscSchoolName} onChange={updateProfileData} />
+      <InputField label="HSC School Location" name="hscSchoolLocation" icon={<MapPin className="w-4 h-4" />} value={profileData.hscSchoolLocation} onChange={updateProfileData} />
+      <InputField label="UG College Name" name="ugCollegeName" icon={<School className="w-4 h-4" />} value={profileData.ugCollegeName} onChange={updateProfileData} />
+      <InputField label="UG College Location" name="ugCollegeLocation" icon={<MapPin className="w-4 h-4" />} value={profileData.ugCollegeLocation} onChange={updateProfileData} />
+      <InputField label="PG College Name" name="pgCollegeName" icon={<School className="w-4 h-4" />} value={profileData.pgCollegeName} onChange={updateProfileData} />
+      <InputField label="PG College Location" name="pgCollegeLocation" icon={<MapPin className="w-4 h-4" />} value={profileData.pgCollegeLocation} onChange={updateProfileData} />
+      <InputField label="SSC Grade" name="sscGrade" icon={<FileText className="w-4 h-4" />} value={profileData.sscGrade} onChange={updateProfileData} />
+      <FileUpload label="SSC Marksheet" name="sscMarksheet" onChange={updateProfileData} />
+      <InputField label="HSC Grade" name="hscGrade" icon={<FileText className="w-4 h-4" />} value={profileData.hscGrade} onChange={updateProfileData} />
+      <FileUpload label="HSC Marksheet" name="hscMarksheet" onChange={updateProfileData} />
+      <InputField label="UG CGPA" name="ugCgpa" icon={<FileText className="w-4 h-4" />} value={profileData.ugCgpa} onChange={updateProfileData} />
+      <FileUpload label="UG Degree Certificate" name="ugDegreeCertificate" onChange={updateProfileData} />
+      <InputField label="Start Year" name="stYear" icon={<Calendar className="w-4 h-4" />} value={profileData.stYear} onChange={updateProfileData} />
+      <InputField label="End Year" name="endYear" icon={<Calendar className="w-4 h-4" />} value={profileData.endYear} onChange={updateProfileData} />
+    </CardContent>
+  </Card>
+)
+
+const DocumentsCard = ({ updateProfileData }) => (
+  <Card className="mb-6">
+    <CardHeader className="bg-purple-600 text-white">
+      <CardTitle className="text-xl font-bold">Documents</CardTitle>
+    </CardHeader>
+    <CardContent className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <FileUpload label="Aadhar Card" name="aadharCard" onChange={updateProfileData} />
+      <FileUpload label="Ration Card" name="rationCard" onChange={updateProfileData} />
+      <FileUpload label="Bonafide Certificate" name="bonafide" onChange={updateProfileData} />
+      <FileUpload label="Income Certificate" name="incomeCertificate" onChange={updateProfileData} />
+      <FileUpload label="Salary Slip" name="salarySlip" onChange={updateProfileData} />
+    </CardContent>
+  </Card>
+)
+
+export function StudentInformation() {
+  const [profileData, setProfileData] = useState({
+    community: '',
+    fatherName: '',
+    motherName: '',
+    fatherOccupation: '',
+    motherOccupation: '',
+    gaurdianName: '',
+    gaurdianOccupation: '',
+    parentContactNo: '',
+    studenttype: '',
     gender: '',
-    dob: '',
+    contactNo: '',
     annualIncome: '',
-    schoolName: '',
-    schoolLocation: '',
+    dob: '',
+    firstGraduateCertificate: null,
+    achievements: [],
+    schoolname: '',
+    schoollocation: '',
     score: '',
-    annualScore: '',
-    grade: '',
+    annualCard: null,
+    sscSchoolName: '',
+    sscSchoolLocation: '',
     hscSchoolName: '',
     hscSchoolLocation: '',
+    ugCollegeName: '',
+    ugCollegeLocation: '',
+    pgCollegeName: '',
+    pgCollegeLocation: '',
     sscGrade: '',
+    sscMarksheet: null,
+    hscGrade: '',
+    hscMarksheet: null,
     degree: '',
     discipline: '',
-    collegeName: '',
-    collegeLocation: '',
     gpa: '',
-    hscGrade:'',
-    ugcgpa: '',
-    startYear: '',
-    endYear: ''
-  })
-  const [achievements, setAchievements] = useState<string[]>([''])
-  const [documents, setDocuments] = useState({
-    annualCard: null,
-    sscMarksheet: null,
-    hscMarksheet: null,
+    ugCgpa: '',
     ugDegreeCertificate: null,
+    stYear: '',
+    endYear: '',
+    aadharCard: null,
+    rationCard: null,
+    bonafide: null,
     incomeCertificate: null,
     salarySlip: null,
-    bonafide: null
   })
 
-  const format = (date: string): string => {
-
-    const [year, month, day] = date.split('-').map(Number);
-
-    const dateObj = new Date(Date.UTC(year, month - 1, day));
-  
-    const formattedDay = String(dateObj.getUTCDate()).padStart(2, '0');
-    const formattedMonth = String(dateObj.getUTCMonth() + 1).padStart(2, '0');
-    const formattedYear = dateObj.getUTCFullYear();
-  
-    const formattedDate = `${formattedDay}/${formattedMonth}/${formattedYear}`;
-  
-    console.log(formattedDate);
-    return formattedDate;
-  }
-  
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData(prevData => ({
+  const updateProfileData = (name, value) => {
+    setProfileData(prevData => ({
       ...prevData,
       [name]: value
     }))
   }
 
-  const handleGenderChange = (value: string) => {
-    setFormData(prevData => ({
+  const addAchievement = () => {
+    setProfileData(prevData => ({
       ...prevData,
-      gender: value
+      achievements: [...prevData.achievements, '']
     }))
   }
 
-  const handleAchievementChange = (index: number, value: string) => {
-    const newAchievements = [...achievements]
-    newAchievements[index] = value
-    setAchievements(newAchievements)
+  const removeAchievement = (index) => {
+    setProfileData(prevData => ({
+      ...prevData,
+      achievements: prevData.achievements.filter((_, i) => i !== index)
+    }))
   }
 
-  const handleAddAchievement = () => {
-    setAchievements([...achievements, ''])
-  }
-
-  const handleRemoveAchievement = (index: number) => {
-    const newAchievements = achievements.filter((_, i) => i !== index)
-    setAchievements(newAchievements.length ? newAchievements : [''])
-  }
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, documentName: string) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      setDocuments(prevDocs => ({
-        ...prevDocs,
-        [documentName]: file
-      }))
-    }
-  }
-
-  const renderEducationFields = () => {
-    switch (studentType) {
-      case 'Secondary':
-        return (
-          <>
-            <InputField icon={<GraduationCap />} label="School Name" name="schoolName" value={formData.schoolName} onChange={handleInputChange} />
-            <InputField icon={<MapPin />} label="School Location" name="schoolLocation" value={formData.schoolLocation} onChange={handleInputChange} />
-            <InputField icon={<FileText />} label="Score" name="score" value={formData.score} onChange={handleInputChange} />
-            <InputField icon={<FileText />} label="Annual Score" name="annualScore" value={formData.annualScore} onChange={handleInputChange} />
-            <InputField icon={<FileText />} label="Grade" name="grade" value={formData.grade} onChange={handleInputChange} />
-          </>
-        )
-      case 'HSC':
-        return (
-          <>
-            <InputField icon={<GraduationCap />} label="School Name" name="hscSchoolName" value={formData.hscSchoolName} onChange={handleInputChange} />
-            <InputField icon={<MapPin />} label="School Location" name="hscSchoolLocation" value={formData.hscSchoolLocation} onChange={handleInputChange} />
-            <InputField icon={<FileText />} label="SSC Grade" name="sscGrade" value={formData.sscGrade} onChange={handleInputChange} />
-          </>
-        )
-      case 'Undergraduate':
-        return (
-          <>
-            <InputField icon={<GraduationCap />} label="Degree" name="degree" value={formData.degree} onChange={handleInputChange} />
-            <InputField icon={<GraduationCap />} label="Discipline" name="discipline" value={formData.discipline} onChange={handleInputChange} />
-            <InputField icon={<GraduationCap />} label="College Name" name="collegeName" value={formData.collegeName} onChange={handleInputChange} />
-            <InputField icon={<MapPin />} label="College Location" name="collegeLocation" value={formData.collegeLocation} onChange={handleInputChange} />
-            <InputField icon={<FileText />} label="SSC Grade" name="sscGrade" value={formData.sscGrade} onChange={handleInputChange} />
-            <InputField icon={<FileText />} label="HSC Grade" name="hscGrade" value={formData.hscGrade} onChange={handleInputChange} />
-            <InputField icon={<FileText />} label="GPA" name="gpa" value={formData.gpa} onChange={handleInputChange} />
-            <InputField icon={<Calendar />} label="Start Year" name="startYear" value={formData.startYear} onChange={handleInputChange} />
-            <InputField icon={<Calendar />} label="End Year" name="endYear" value={formData.endYear} onChange={handleInputChange} />
-          </>
-        )
-      case 'Postgraduate':
-        return (
-          <>
-            <InputField icon={<GraduationCap />} label="Degree" name="degree" value={formData.degree} onChange={handleInputChange} />
-            <InputField icon={<GraduationCap />} label="Discipline" name="discipline" value={formData.discipline} onChange={handleInputChange} />
-            <InputField icon={<GraduationCap />} label="College Name" name="collegeName" value={formData.collegeName} onChange={handleInputChange} />
-            <InputField icon={<MapPin />} label="College Location" name="collegeLocation" value={formData.collegeLocation} onChange={handleInputChange} />
-            <InputField icon={<FileText />} label="UG CGPA" name="ugcgpa" value={formData.ugcgpa} onChange={handleInputChange} />
-            <InputField icon={<Calendar />} label="Start Year" name="startYear" value={formData.startYear} onChange={handleInputChange} />
-            <InputField icon={<Calendar />} label="End Year" name="endYear" value={formData.endYear} onChange={handleInputChange} />
-          </>
-        )
-      default:
-        return null
-    }
-  }
-
-  const renderDocumentUploads = () => {
-    const documentList = {
-      Secondary: ['annualCard', 'bonafide', 'incomeCertificate', 'salarySlip'],
-      HSC: ['sscMarksheet', 'bonafide', 'incomeCertificate', 'salarySlip'],
-      Undergraduate: ['sscMarksheet', 'hscMarksheet', 'bonafide', 'incomeCertificate', 'salarySlip'],
-      Postgraduate: ['sscMarksheet', 'hscMarksheet', 'ugDegreeCertificate', 'bonafide', 'incomeCertificate', 'salarySlip']
-    }
-    //@ts-ignore
-    return documentList[studentType].map(doc => (
-      <div key={doc} className="mb-4">
-        <Label htmlFor={doc} className="block text-sm font-medium text-gray-700 mb-1">
-          {doc.charAt(0).toUpperCase() + doc.slice(1).replace(/([A-Z])/g, ' $1').trim()}
-        </Label>
-        <div className="flex items-center space-x-2">
-          <Input
-            id={doc}
-            type="file"
-            onChange={(e) => handleFileChange(e, doc)}
-            className="flex-grow"
-          />
-          <Button variant="outline" size="icon">
-            <Upload className="h-4 w-4" />
-          </Button>
-        </div>
-        
-        {//@ts-ignore 
-          documents[doc] && <p className="text-sm text-green-600 mt-1">File selected: {documents[doc].name}</p>}
-      </div>
-    ))
-  }
-
-  const handleSubmit = async() => {
-    try{
-
-      //@ts-ignore
-    formData["achievements"]=achievements
-      //@ts-ignore
-    formData["dob"]=format(formData["dob"])
-    //@ts-ignore
-    formData["studentType"]=studentType
-    console.log('Form Data:', formData)
-    console.log('Achievements:', achievements.filter(a => a.trim() !== ''))
-    console.log('Documents:', documents)
-    const res=await axios.post(`${BACKEND_URL}/api/student/addinformation`,{
-      formData,
-
-    },{
-      headers:{
-        Authorization:localStorage.getItem("studenttoken")
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    console.log(profileData)
+    try {
+      const formData = new FormData()
+      for (const key in profileData) {
+        if (profileData[key] instanceof File) {
+          formData.append(key, profileData[key])
+        } else if (Array.isArray(profileData[key])) {
+          formData.append(key, JSON.stringify(profileData[key]))
+        } else {
+          formData.append(key, profileData[key])
+        }
       }
-    })
+      console
 
+      const res = await axios.post(`${BACKEND_URL}/api/student/addinformation`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: localStorage.getItem("studenttoken")
+        }
+      })
 
-    console.log(res)
-
+      console.log(res)
+    } catch (error) {
+      console.error("Error submitting profile data:", error)
     }
-    catch(err)
-    {
-
-      alert(err)
-    }
-
-    
- 
   }
 
   return (
-    <div className="min-h-screen w-screen absolute left-0 top-0 bg-gradient-to-b from-purple-100 to-blue-200">
-      <header className="bg-white shadow-md">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Link to="/" className="flex items-center space-x-2">
-            <GraduationCap className="h-8 w-8 text-purple-600" />
-            <span className="text-2xl font-bold text-purple-600">ScholarLink</span>
-          </Link>
-          <nav className="hidden md:flex items-center space-x-4">
-            <NavLink href="/">Home</NavLink>
-            <NavLink href="/scholarships">Scholarships</NavLink>
-            <NavLink href="/student-information">Student Information</NavLink>
-          </nav>
-          <button className="md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-            <Menu className="h-6 w-6 text-purple-600" />
-          </button>
-        </div>
-        {mobileMenuOpen && (
-          <nav className="md:hidden bg-white py-2">
-            <NavLink href="/" className="block px-4 py-2">Home</NavLink>
-            <NavLink href="/scholarships" className="block px-4 py-2">Scholarships</NavLink>
-            <NavLink href="/student-information" className="block px-4 py-2">Student Information</NavLink>
-          </nav>
-        )}
-      </header>
-
-      <main className="container mx-auto px-4 py-8">
-        <motion.h1
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-3xl md:text-4xl font-bold text-center text-purple-800 mb-8"
-        >
-          Student Information
-        </motion.h1>
-
-        <div className='w-full'>
-          <Card className="mb-8 w-full md:w-2/3 lg:w-1/2 mx-auto">
-            <CardHeader>
-              <CardTitle className="text-xl md:text-2xl font-bold text-purple-800">Personal Information</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="col-span-1 md:col-span-2">
-                  <Label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-1">
-                    Gender
-                  </Label>
-                  <Select value={formData.gender} onValueChange={handleGenderChange}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select gender" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="male">Male</SelectItem>
-                      <SelectItem value="female">Female</SelectItem>
-                      <SelectItem value="not-disclose">Prefer not to disclose</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <InputField icon={<Calendar />} label="Date of Birth" name="dob" value={formData.dob} onChange={handleInputChange} type="date" />
-                <InputField icon={<DollarSign />} label="Annual Income" name="annualIncome" value={formData.annualIncome} onChange={handleInputChange} type="number" />
-                <div className="col-span-1 md:col-span-2">
-                  <Label htmlFor="studentType" className="block text-sm font-medium text-gray-700 mb-1">
-                    Student Type
-                  </Label>
-                  <Select value={studentType} onValueChange={setStudentType}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select student type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Secondary">Secondary</SelectItem>
-                      <SelectItem value="HSC">HSC</SelectItem>
-                      <SelectItem value="Undergraduate">Undergraduate</SelectItem>
-                      <SelectItem value="Postgraduate">Postgraduate</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="col-span-1 md:col-span-2">
-                  <Label className="block text-sm font-medium text-gray-700 mb-1">
-                    Achievements
-                  </Label>
-                  <div className="space-y-2">
-                    {achievements.map((achievement, index) => (
-                      <div key={index} className="flex items-center space-x-2">
-                        <Input
-                          value={achievement}
-                          onChange={(e) => handleAchievementChange(index, e.target.value)}
-                          placeholder="Enter an achievement"
-                          className="flex-grow"
-                        />
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() => handleRemoveAchievement(index)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                    <Button
-                      variant="outline"
-                      onClick={handleAddAchievement}
-                      className="w-full"
-                    >
-                      <Plus className="h-4 w-4 mr-2" /> Add Achievement
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="mb-8 w-full md:w-2/3 lg:w-1/2 mx-auto">
-            <CardHeader>
-              <CardTitle className="text-xl md:text-2xl font-bold text-purple-800">Education Details</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {renderEducationFields()}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="mb-8 w-full md:w-2/3 lg:w-1/2 mx-auto">
-            <CardHeader>
-              <CardTitle className="text-xl md:text-2xl font-bold text-purple-800">Document Upload</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {renderDocumentUploads()}
-            </CardContent>
-          </Card>
-
-          <div className="flex justify-center">
-            <Button onClick={handleSubmit} className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 md:px-8 md:py-3 rounded-lg text-base md:text-lg font-semibold transition duration-300 ease-in-out transform hover:scale-105">
-              Submit Information
-            </Button>
-          </div>
-        </div>
-      </main>
-
-      <footer className="bg-gray-800 text-white py-6 md:py-8 mt-12">
-        <div className="container mx-auto px-4 text-center">
-          <p>&copy; 2023 ScholarLink. All rights reserved.</p>
-        </div>
-      </footer>
-    </div>
-  )
-}
-
-//@ts-ignore
-function NavLink({ href, children, className = "" }) {
-  return (
-    <Link to={href} className={`text-gray-600 hover:text-purple-600 transition-colors duration-200 ${className}`}>
-      {children}
-    </Link>
-  )
-}
-
-//@ts-ignore
-function InputField({ icon, label, name, value, onChange, type = "text" }) {
-  return (
-    <div>
-      <Label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">
-        {label}
-      </Label>
-      <div className="relative">
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          {icon}
-        </div>
-        <Input
-          type={type}
-          name={name}
-          id={name}
-          value={value}
-          onChange={onChange}
-          className="pl-10 w-full"
-          placeholder={label}
-        />
+    <div className="min-h-screen bg-gradient-to-b from-purple-100 to-purple-200 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <PersonalInfoCard
+            profileData={profileData}
+            updateProfileData={updateProfileData}
+            addAchievement={addAchievement}
+            removeAchievement={removeAchievement}
+          />
+          {profileData.studenttype === 'secondary' && <SecondaryEducationCard profileData={profileData} updateProfileData={updateProfileData} />}
+          {profileData.studenttype === 'higher_secondary' && <HigherSecondaryEducationCard profileData={profileData} updateProfileData={updateProfileData} />}
+          {profileData.studenttype === 'undergraduate' && <UndergraduateEducationCard profileData={profileData} updateProfileData={updateProfileData} />}
+          {profileData.studenttype === 'postgraduate' && <PostgraduateEducationCard profileData={profileData} updateProfileData={updateProfileData} />}
+          <DocumentsCard updateProfileData={updateProfileData} />
+          <Button type="submit" className="w-1/2 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition duration-300">
+            Save Profile
+          </Button>
+        </form>
       </div>
     </div>
   )

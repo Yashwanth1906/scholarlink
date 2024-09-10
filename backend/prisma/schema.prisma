@@ -47,6 +47,7 @@ model StudentDetails{
   incomecertificate String?
   salaryslip String?
   achievements String[]
+  community String
 }
 
 

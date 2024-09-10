@@ -4,7 +4,6 @@ import { S3Client, PutObjectCommand,GetObjectCommand } from "@aws-sdk/client-s3"
 import multer from 'multer';
 
 import jwt from "jsonwebtoken"
-import { escape } from "querystring";
 const prisma=new PrismaClient();
 
 const createToken = (email:any)=>{
@@ -105,12 +104,13 @@ const uploadToS3 = async (file: Express.Multer.File, folder: string) => {
 
   export const addDetails = async (req: any, res: any): Promise<Response> => {
     try {
+      console.log(req.body)
       const formData = req.body.formData || {};
       const {
-        studentType,
+        studenttype,
         dob,
         annualIncome,
-        schoolName,
+        schoolname,
         schoolLocation,
         score,
         grade,
@@ -119,8 +119,8 @@ const uploadToS3 = async (file: Express.Multer.File, folder: string) => {
         discipline,
         gpa,
         hscGrade,
-        ugcgpa,
-        startYear,
+        ugCgpa,
+        stYear,
         endYear,
         gender,
         achievements,
@@ -128,30 +128,33 @@ const uploadToS3 = async (file: Express.Multer.File, folder: string) => {
         motherName,
         fatherOccupation,
         motherOccupation,
-        guardianName,
-        guardianOccupation,
+        gaurdianName,
+        gaurdianOccupation,
         parentContactNo,
         contactNo,
-        sscschoolname,sscschoolloation,hscschoolname,hscschoollocation,
-        ugcollegename,ugcollegelocation,pgcollegename,pgcollegelocation
+        sscSchoolName,sscSchoolLocation,hscSchoolName,hscSchoolLocation,
+        ugCollegename,ugCollegeLocation,pgCollegeName,pgCollegeLocation,
+        community
       } = formData;
-  
-      // Upload files to S3
+      console.log(req.body)
+
+
       const bonafideUrl = req.files?.bonafide ? await uploadToS3(req.files.bonafide[0] as Express.Multer.File, 'documents') : null;
-      const incomeCertificateUrl = req.files?.incomecertificate ? await uploadToS3(req.files.incomecertificate[0] as Express.Multer.File, 'documents') : null;
-      const salarySlipUrl = req.files?.salaryslip ? await uploadToS3(req.files.salaryslip[0] as Express.Multer.File, 'documents') : null;
+      const incomeCertificateUrl = req.files?.incomeCertificate ? await uploadToS3(req.files.incomecertificate[0] as Express.Multer.File, 'documents') : null;
+      const salarySlipUrl = req.files?.salarySlip ? await uploadToS3(req.files.salaryslip[0] as Express.Multer.File, 'documents') : null;
       const annualCardUrl = req.files?.annualCard ? await uploadToS3(req.files.annualCard[0] as Express.Multer.File, 'documents') : null;
       const sscMarksheetUrl = req.files?.sscMarksheet ? await uploadToS3(req.files.sscMarksheet[0] as Express.Multer.File, 'documents') : null;
       const hscMarksheetUrl = req.files?.hscMarksheet ? await uploadToS3(req.files.hscMarksheet[0] as Express.Multer.File, 'documents') : null;
       const ugDegreeCertificateUrl = req.files?.ugDegreeCertificate ? await uploadToS3(req.files.ugDegreeCertificate[0] as Express.Multer.File, 'documents') : null;
       const aadhaarCardUrl = req.files?.aadhaarCard ? await uploadToS3(req.files.aadhaarCard[0] as Express.Multer.File, 'documents') : null;
       const rationCardUrl = req.files?.rationCard ? await uploadToS3(req.files.rationCard[0] as Express.Multer.File, 'documents') : null;
-      const firstGraduateUrl = req.files?.firstGraduate ? await uploadToS3(req.files.firstGraduate[0] as Express.Multer.File, 'documents') : null;
+      const firstGraduateUrl = req.files?.firstGraduateCertificate ? await uploadToS3(req.files.firstGraduate[0] as Express.Multer.File, 'documents') : null;
+  
       await prisma.$transaction(async (tx) => {
         await tx.studentDetails.create({
           data: {
             studemail: req.headers.email as string,
-            currentQualifications: studentType,
+            currentQualifications: studenttype,
             gender,
             annualIncome: parseInt(annualIncome, 10),
             dob,
@@ -160,81 +163,82 @@ const uploadToS3 = async (file: Express.Multer.File, folder: string) => {
             motherName: motherName || null,
             fatherOccupation: fatherOccupation || null,
             motherOccupation: motherOccupation || null,
-            gaurdianName: guardianName || null,
-            gaurdianOccupation: guardianOccupation || null,
-            parentContactNo: parentContactNo,
-            contactNo: contactNo,
+            gaurdianName: gaurdianName || null,
+            gaurdianOccupation: gaurdianOccupation || null,
+            parentContactNo: parentContactNo+"",
+            contactNo: contactNo+"",
             aadharCard: aadhaarCardUrl,
             rationCard: rationCardUrl,
             firstGraduate: firstGraduateUrl,
             bonafide: bonafideUrl,
             incomecertificate: incomeCertificateUrl,
             salaryslip: salarySlipUrl,
+            community
           },
         });
   
-        if (studentType === 'Secondary') {
+        if (studenttype === 'Secondary') {
           await tx.secondaryStudentDetails.create({
             data: {
               emailId: req.headers.email as string,
-              schoolname: schoolName,
+              schoolname: schoolname,
               schoollocation: schoolLocation,
               score: parseFloat(score),
               grade,
               annualcard: annualCardUrl,
             },
           });
-        } else if (studentType === 'HSC') {
+        } else if (studenttype === 'HSC') {
           await tx.hSCStudentDetails.create({
             data: {
               emailId: req.headers.email as string,
-              sscschoolname: sscschoolname,
-              sscschoollocation:sscschoolloation,
-              schoolname: hscschoolname,
-              schoollocation: hscschoollocation,
+              sscschoolname: sscSchoolName,
+              sscschoollocation:sscSchoolLocation,
+              schoolname: hscSchoolName,
+              schoollocation: hscSchoolLocation,
               sscgrade: parseFloat(sscGrade),
               sscmarksheet: sscMarksheetUrl,
             },
           });
-        } else if (studentType === 'Undergraduate') {
+        } else if (studenttype === 'Undergraduate') {
           await tx.uGCollegeStudentDetails.create({
             data: {
               emailId: req.headers.email as string,
               degree,
               discipline,
-              sscschoolname:sscschoolname,
-              sscschoollocation:sscschoolloation,
-              hscschoolname:hscschoolname,
-              hscschoollocation:hscschoollocation,
-              collegename: ugcollegename,
-              collegelocation: ugcollegelocation,
+              sscschoolname:sscSchoolName,
+              sscschoollocation:sscSchoolLocation,
+              hscschoolname:hscSchoolName,
+              hscschoollocation:hscSchoolLocation,
+              collegename: ugCollegename,
+              collegelocation: ugCollegeLocation,
               sscgrade: parseFloat(sscGrade),
               sscmarksheet: sscMarksheetUrl,
               hscgrade: parseFloat(hscGrade),
               hscmarksheet: hscMarksheetUrl,
               gpa,
-              styear: parseInt(startYear, 10),
+              styear: parseInt(stYear, 10),
               endyear: parseInt(endYear, 10),
             },
           });
-        } else if (studentType === 'Postgraduate') {
+        } else if (studenttype === 'Postgraduate') {
           await tx.pGCollegeStudentDetails.create({
             data: {
               emailId: req.headers.email as string,
               degree,
               discipline,
-              sscschoolname:sscschoolname,
-              sscschoollocation:sscschoolloation,
-              hscschoolname:hscschoolname,
-              hscschoollocation:hscschoollocation,
-              ugcollegename:ugcollegename,
-              ugcollegelocation:ugcollegelocation,
-              collegename: pgcollegename,
-              collegelocation: pgcollegelocation,
+              sscschoolname:sscSchoolName,
+              sscschoollocation:sscSchoolLocation,
+              hscschoolname:hscSchoolName,
+              hscschoollocation:hscSchoolLocation,
+              ugcollegename:ugCollegename,
+              ugcollegelocation:ugCollegeLocation,
+              collegename: pgCollegeName,
+              collegelocation: pgCollegeLocation,
               hscgrade:hscGrade,
               sscgrade:sscGrade,
-              ugcgpa,
-              styear: parseInt(startYear, 10),
+              ugcgpa:ugCgpa,
+              styear: parseInt(stYear, 10),
               endyear: parseInt(endYear, 10),
               ugdegreecertificate: ugDegreeCertificateUrl,
             },
