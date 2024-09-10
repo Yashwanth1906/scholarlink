@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken"
 
 
 const createToken = (email:any)=>{
-    let token= jwt.sign({id:email},process.env.JWT_SECRET || "student");
+    let token= jwt.sign({id:email}, "student");
     return `Bearer ${token}`
 }
 
@@ -75,7 +75,7 @@ export const createScholarship = async(req:any,res:any)=>{
     const scholarship=await prisma.scholarship.create({
         data:{
             name,
-            providedby:1,
+            providedby:"test@gmail.com",
             scholarshipfor,
             likes:0,
             amt,

@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { GraduationCap, CheckCircle, Clock, X } from 'lucide-react'
 import {Link, useNavigate} from "react-router-dom"
 
-// Mock data for scholarships
+
 const appliedScholarships = [
   { id: 1, name: "STEM Excellence Scholarship", providedBy: "Bright Future Foundation", amount: 10000, deadline: "2023-12-31", field: "STEM", description: "For outstanding students pursuing degrees in Science, Technology, Engineering, or Mathematics.", status: "Pending" },
   { id: 2, name: "Women in Tech Grant", providedBy: "TechForward Institute", amount: 7500, deadline: "2023-11-30", field: "Technology", description: "Supporting women pursuing careers in technology and computer science.", status: "Under Review" },
@@ -29,6 +29,8 @@ const completedScholarships = [
 
 export function ScholarshipViewer() {
   const [activeTab, setActiveTab] = useState("applied")
+  const [appliedScholarships, setAppliedScholarships]=useState([]);
+  const [completedScholarships,setCompletedScholarships]=useState([]);
 
   return (
     <div className="min-h-screen w-screen  absolute top-0 left-0 right-0 bg-gradient-to-b from-purple-100 to-blue-200">

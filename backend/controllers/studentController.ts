@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken"
 const prisma=new PrismaClient();
 
 const createToken = (email:any)=>{
-    let token= jwt.sign({id:email},process.env.JWT_SECRET || "");
+    let token= jwt.sign({id:email}, "student");
     return `Bearer ${token}`
 }
 
@@ -283,7 +283,8 @@ export const getScholarships=async(req:any,res:any)=>{
               }
             },
             include: {
-              appliedScholarship: true 
+              appliedScholarship: true ,
+              admin:true
             }
           });
 
@@ -320,11 +321,13 @@ export const getScholarship=async(req:any,res:any)=>
 export const applyScholarship=async(req:any,res:any)=>{
     try{
         const id=parseInt(req.query.id);
+        console.log(req.headers.id)
         await prisma.scholarshipApplied.create({
             data:{
                 studentid:req.headers.id,
                 scholarshipid:id,
-                status:"pending"
+                status:"pending",
+                scholarshipEssay:req.body.bestFit
             }
         })
         return res.status(200).json({msg:"done"})
@@ -357,6 +360,41 @@ export const getProfile=async(req:any,res:any)=>{
     catch{
         return res.status(500).json({msg:"error"})
     }
+}
+
+export const scholarshipView=async(req:any,res:any)=>{
+    try{
+        console.log(req.headers.id +"  ***")
+        const applied=await prisma.scholarshipApplied.findMany({
+            where:{
+                studentid:req.headers.id,
+                status:"Pending"
+            },
+            include:{
+                scholarship:true,
+                student:true
+            }
+        })
+        const completed=await prisma.scholarshipApplied.findMany({
+            where:{
+                studentid:req.headers.id,
+                status:"Completed"
+            }
+        })
+
+        return res.status(200).json({applied,completed})
+
+
+    }
+    catch(err){
+        console.log(err)
+        return res.status(500).json({msg:"error"})
+
+    }
+
+
+
+
 }
 
 
