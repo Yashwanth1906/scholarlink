@@ -21,7 +21,7 @@ export function AdminNavbar() {
     <nav className="bg-white  w-screen absolute left-0 right-0 top-0 shadow-md">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <Link to="/admin" className="flex items-center space-x-2">
+          <Link to="/admin/" className="flex items-center space-x-2">
             <GraduationCap className="h-12 w-12 text-purple-600" />
             <div className="flex flex-col">
               <span className="text-2xl font-bold text-purple-600 leading-tight">ScholarLink</span>
@@ -29,8 +29,8 @@ export function AdminNavbar() {
             </div>
           </Link>
           <div className="hidden md:flex items-center space-x-4">
-            <NavLink href="/admin/ongoing">Ongoing</NavLink>
-            <NavLink href="/admin/completed">Completed</NavLink>
+            <NavLink href="/admin/showongoing">Ongoing</NavLink>
+            <NavLink href="/admin/showcompleted">Completed</NavLink>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-10 w-10 rounded-full">
