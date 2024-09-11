@@ -8,7 +8,10 @@ import { CalendarIcon, SearchIcon } from 'lucide-react'
 import { format } from 'date-fns'
 import axios from 'axios'
 import { BACKEND_URL } from '../../config'
+
+
 import { useNavigate } from 'react-router-dom'
+
 
 type Scholarship = {
 
@@ -65,8 +68,9 @@ export  function AdminCompletedScholarships() {
 
   return (
     <div className="min-h-screen w-screen absolute left-0 top-0 bg-gradient-to-b from-purple-100 to-blue-200 p-6 md:p-10">
+      <AdminNavbar/>
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl md:text-4xl font-bold text-purple-800 mb-6">Completed Scholarships</h1>
+        <h1 className="text-3xl md:text-4xl py-20 font-bold text-purple-800 mb-6">Completed Scholarships</h1>
         
         {/* <div className="mb-6 relative">
           <Input

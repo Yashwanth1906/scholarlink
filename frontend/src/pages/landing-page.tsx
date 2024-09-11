@@ -11,7 +11,7 @@ export function LandingPage() {
   return (
     <div className="min-h-screen w-screen absolute left-0 right-0 bg-gradient-to-b from-purple-100 to-blue-200">
       <header className="bg-white shadow-md">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+        <div className="container mx-auto px-4 py-2 flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-2">
             <GraduationCap className="h-8 w-8 text-purple-600" />
             <span className="text-2xl font-bold text-purple-600">ScholarLink</span>
