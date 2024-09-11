@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { GraduationCap, PenTool, Plus, Trash2 } from 'lucide-react'
 import{Link} from "react-router-dom"
+import { StudentNavbar } from '@/components/student-navbar'
 
 interface Subtopic {
   id: number;
@@ -56,6 +57,10 @@ export function CreateBlogPost() {
 
   return (
     <div className="min-h-screen w-screen absolute left-0 right-0 top-0 bg-gradient-to-b from-purple-100 to-blue-200">
+      <StudentNavbar />
+      <br></br>
+      <br></br>
+      <br></br>
       <header className="bg-white shadow-md">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-2">

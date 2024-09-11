@@ -10,6 +10,7 @@ import { GraduationCap, Search, LogIn, Menu,  } from 'lucide-react'
 import {Link, useNavigate, } from "react-router-dom"
 import axios from 'axios'
 import { BACKEND_URL } from '../../config'
+import { StudentNavbar } from '@/components/student-navbar'
 
 type scholarhsips=
   {
@@ -71,6 +72,7 @@ export function Scholarships() {
 
   return (
     <div className="min-h-screen w-screen absolute top-0 left-0 right-0 bg-gradient-to-b from-purple-100 to-blue-200">
+<<<<<<< HEAD
       <header className="bg-white shadow-md">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <Link to="/scholarships-home" className="flex items-center space-x-2">
@@ -111,6 +113,12 @@ export function Scholarships() {
           </motion.nav>
         )} */}
       </header>
+=======
+      <StudentNavbar />
+      <br></br>
+      <br></br>
+      <br></br>
+>>>>>>> 8a8173ce38d37e9ea1e294204b4e7368e66e26cf
 
       <main className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold text-center text-purple-800 mb-8">Available Scholarships</h1>

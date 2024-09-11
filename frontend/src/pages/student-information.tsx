@@ -10,6 +10,7 @@ import { User, Mail, Phone, Calendar, DollarSign, GraduationCap, School, MapPin,
 import axios from 'axios'
 import { BACKEND_URL } from '../../config'
 import { useNavigate } from 'react-router-dom'
+import { StudentNavbar } from '@/components/student-navbar'
 
 const InputField = ({ label, name, icon, type = "text", value, onChange }) => {
   return (
@@ -363,7 +364,10 @@ export function StudentInformation() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-100 to-purple-200 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen w-screen absolute top-0 left-0 right-0  bg-gradient-to-b from-purple-100 to-purple-200 py-12 px-4 sm:px-6 lg:px-8">
+      <StudentNavbar />
+      <br></br>
+      <br></br>
       <div className="max-w-4xl mx-auto">
         <form onSubmit={handleSubmit} className="space-y-6">
           <PersonalInfoCard
