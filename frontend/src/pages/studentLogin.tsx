@@ -24,7 +24,7 @@ export function StudLogin() {
   
       })
       localStorage.setItem("studenttoken",res.data.token)
-    //   navigate("/student/ongoing")
+      navigate("/student/scholarships")
 
     }
     catch{

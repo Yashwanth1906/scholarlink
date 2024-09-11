@@ -114,6 +114,7 @@ export  function AdminScholarshipCreation() {
                     <SelectItem value="any">Any</SelectItem>
                     <SelectItem value="male">Male</SelectItem>
                     <SelectItem value="female">Female</SelectItem>
+                    <SelectItem value="Others">Others</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -126,11 +127,11 @@ export  function AdminScholarshipCreation() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="any">Any</SelectItem>
-                    <SelectItem value="1">Below 1 Lakh</SelectItem>
-                    <SelectItem value="3">Below 3 Lakhs</SelectItem>
-                    <SelectItem value="5">Below 5 Lakhs</SelectItem>
-                    <SelectItem value="7">Below 7 Lakhs</SelectItem>
-                    <SelectItem value="10">Below 10 Lakhs</SelectItem>
+                    <SelectItem value="Below 1 Lakh">Below 1 Lakh</SelectItem>
+                    <SelectItem value="Below 3 Lakh">Below 3 Lakhs</SelectItem>
+                    <SelectItem value="Below 5 Lakh">Below 5 Lakhs</SelectItem>
+                    <SelectItem value="Below 7 Lakh">Below 7 Lakhs</SelectItem>
+                 
                   </SelectContent>
                 </Select>
               </div>
@@ -143,10 +144,10 @@ export  function AdminScholarshipCreation() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="any">Any</SelectItem>
-                    <SelectItem value="secondary">Secondary</SelectItem>
-                    <SelectItem value="higherSecondary">Higher Secondary</SelectItem>
-                    <SelectItem value="Engineering">Engineering Student</SelectItem>
-                    <SelectItem value="Medical">Medical Student</SelectItem>
+                    <SelectItem value="Secondary">Secondary</SelectItem>
+                    <SelectItem value="Higher Secondary">Higher Secondary</SelectItem>
+                    <SelectItem value="UG">UG Student</SelectItem>
+
                     <SelectItem value="PG">PG Student</SelectItem>
                    
                   </SelectContent>
@@ -161,9 +162,9 @@ export  function AdminScholarshipCreation() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="any">Any</SelectItem>
-                    <SelectItem value="OC">OC</SelectItem>
+                    {/* <SelectItem value="OC">OC</SelectItem> */}
                     <SelectItem value="BC">BC</SelectItem>
-                    <SelectItem value="BCM">BCM</SelectItem>
+                    {/* <SelectItem value="BCM">BCM</SelectItem> */}
                     <SelectItem value="MBC">MBC</SelectItem>
                     <SelectItem value="SC">SC</SelectItem>
                     <SelectItem value="ST">ST</SelectItem>

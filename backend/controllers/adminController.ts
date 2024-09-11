@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client"
 const prisma=new PrismaClient();
 import bcrypt from "bcrypt"
+import { rmSync } from "fs";
 import jwt from "jsonwebtoken"
 
 
@@ -170,4 +171,39 @@ export const showCompletedScholarships=async(req:any,res:any)=>{
     {
         return res.status(500).json({msg:"error"})
     }
+}
+
+
+export const viewDetails=async(req:any,res:any)=>{
+    try{
+        const id=parseInt(req.query.id);
+        const details=await prisma.scholarship.findUnique({
+            where:{
+                id
+            },
+            include:{
+                appliedScholarship:{
+                    include:{
+                        student:{
+                            include:{
+                                studentdetails:true
+                            }
+                        }
+                    }
+                },
+                admin:true
+            }
+
+        })
+
+        return res.status(200).json({details})
+
+    }
+    catch(err){
+        console.log(err)
+        return res.status(500).json({msg:"error"})
+    }
+
+
+
 }

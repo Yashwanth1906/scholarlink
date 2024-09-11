@@ -6,11 +6,13 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { GraduationCapIcon } from 'lucide-react'
 import axios from 'axios'
 import { BACKEND_URL } from '../../config'
+import { useNavigate } from 'react-router-dom'
 
 export  function StudentRegister() {
   const [name,setName]=useState("");
   const [email,setEmail]=useState("")
   const [password,setPassword]=useState("")
+  const navigate=useNavigate();
 
 
   const handleSubmit = async() => {
@@ -22,6 +24,9 @@ export  function StudentRegister() {
         })
 
         localStorage.setItem("studenttoken",res.data.token)
+        navigate("/student/information");
+        
+
     }
     catch{
         alert("error")

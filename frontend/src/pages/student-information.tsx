@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { User, Mail, Phone, Calendar, DollarSign, GraduationCap, School, MapPin, FileText, Upload, Award, Plus, X } from 'lucide-react'
 import axios from 'axios'
 import { BACKEND_URL } from '../../config'
+import { useNavigate } from 'react-router-dom'
 
 const InputField = ({ label, name, icon, type = "text", value, onChange }) => {
   return (
@@ -260,6 +261,8 @@ const DocumentsCard = ({ updateProfileData }) => (
 )
 
 export function StudentInformation() {
+  const navigate=useNavigate();
+
   const [profileData, setProfileData] = useState({
     community: '',
     fatherName: '',
@@ -353,6 +356,7 @@ export function StudentInformation() {
       })
 
       console.log(res)
+      navigate("/student/ongoing")
     } catch (error) {
       console.error("Error submitting profile data:", error)
     }

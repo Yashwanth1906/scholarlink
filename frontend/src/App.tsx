@@ -35,12 +35,14 @@ function App() {
 
 
 
+
           <Route path="/admin/register" element={<AdminRegister/>}></Route>
           <Route path="/admin/login" element={<AdminLogin/>}></Route>
           <Route path="/admin/createscholarship" element={<AdminScholarshipCreation/>}></Route>
           <Route path="/admin/showongoing" element={<AdminOngoingScholarships/>}></Route>
           <Route path="/admin/showcompleted" element={<AdminCompletedScholarships/>}></Route>
           <Route path="/admin/scholarshipdetails" element={<ScholarshipDetails/>}></Route>
+
 
 
          
