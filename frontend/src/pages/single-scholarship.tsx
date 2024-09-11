@@ -10,6 +10,7 @@ import { GraduationCap, DollarSign, Users, ThumbsUp, Calendar, Clock, AlertCircl
 import axios from 'axios'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BACKEND_URL } from '../../config'
+import { StudentNavbar } from '@/components/student-navbar'
 
 type scholarship={
   
@@ -88,6 +89,7 @@ export  function SingleScholarship() {
         }
       })
       console.log(res);
+      navigate("/student/scholarships")
       setIsDialogOpen(false)
     }
     catch(err){
@@ -109,7 +111,11 @@ export  function SingleScholarship() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-purple-100 to-blue-200 p-4 md:p-8">
+    <div className="min-h-screen w-screen absolute top-0 left-0 right-0 bg-gradient-to-b from-purple-100 to-blue-200 p-4 md:p-8">
+      <StudentNavbar />
+      <br></br>
+      <br></br>
+      <br></br>
       <Card className="w-full max-w-3xl mx-auto">
         <CardHeader>
           <CardTitle className="text-2xl md:text-3xl font-bold text-purple-800">{scholarship.name}</CardTitle>
@@ -163,6 +169,7 @@ export  function SingleScholarship() {
             >
               Apply for Scholarship
             </Button>
+            
           </div>
         </CardContent>
       </Card>

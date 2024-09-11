@@ -14,6 +14,7 @@ import { format } from "date-fns"
 import axios from 'axios'
 import { AdminNavbar } from '@/components/admin-navbar'
 import { BACKEND_URL } from '../../config'
+import { useNavigate } from 'react-router-dom'
 
 
 function formatDate(date:any)
@@ -21,7 +22,8 @@ function formatDate(date:any)
     return new Date(date).toISOString().substring(0,10);
 }
 
-export  function AdminScholarshipCreation() {
+export function AdminScholarshipCreation() {
+  const navigate = useNavigate();
   const [scholarshipData, setScholarshipData] = useState({
     name: '',
     image: null,
@@ -78,8 +80,10 @@ export  function AdminScholarshipCreation() {
     console.log('Scholarship Data:', scholarshipData)
     try{
         const res=await axios.post(`${BACKEND_URL}/api/admin/createscholarship`,scholarshipData)
-        console.log(res)
+      console.log(res)
+      navigate("/admin/showongoing?")
     }
+   
     catch(err){
         alert("error")
     }

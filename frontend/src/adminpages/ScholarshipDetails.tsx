@@ -84,7 +84,9 @@ export  function ScholarshipDetails() {
       <br></br>
       <br></br>
       <div className="max-w-4xl mx-auto bg-white rounded-lg  shadow-xl py-80 md:p-8">
-        <h1 className="text-3xl md:text-4xl font-bold  text-purple-800 mb-6">{scholarship.name}</h1>
+        
+        <h1 className="text-3xl md:text-4xl font-bold  text-purple-800 mb-6">{//@ts-ignore
+          scholarship.name}</h1>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <Card>
@@ -93,10 +95,14 @@ export  function ScholarshipDetails() {
             </CardHeader>
             <CardContent>
               <ul className="space-y-2">
-                <li><span className="font-medium">Gender:</span> {scholarship.scholarshipfor[0]}</li>
-                <li><span className="font-medium">Annual Income:</span> {scholarship.scholarshipfor[1]}</li>
-                <li><span className="font-medium">Student Type:</span> {scholarship.scholarshipfor[2]}</li>
-                <li><span className="font-medium">Community:</span> {scholarship.scholarshipfor[3]}</li>
+                <li><span className="font-medium">Gender:</span> {//@ts-ignore
+                  scholarship.scholarshipfor[0]}</li>
+                <li><span className="font-medium">Annual Income:</span> {//@ts-ignore
+                  scholarship.scholarshipfor[1]}</li>
+                <li><span className="font-medium">Student Type:</span> {//@ts-ignore
+                  scholarship.scholarshipfor[2]}</li>
+                <li><span className="font-medium">Community:</span> {//@ts-ignore
+                  scholarship.scholarshipfor[3]}</li>
               </ul>
             </CardContent>
           </Card>
@@ -109,19 +115,24 @@ export  function ScholarshipDetails() {
               <div className="space-y-2">
                 <div className="flex items-center">
                   <ThumbsUp className="mr-2 h-5 w-5 text-blue-500" />
-                  <span>{scholarship.likes} Likes</span>
+                  <span>{//@ts-ignore
+                    scholarship.likes} Likes</span>
                 </div>
                 <div className="flex items-center">
                   <DollarSign className="mr-2 h-5 w-5 text-green-500" />
-                  <span>₹{scholarship.amt}</span>
+                  <span>₹{//@ts-ignore
+                    scholarship.amt}</span>
                 </div>
                 <div className="flex items-center">
                   <Clock className="mr-2 h-5 w-5 text-purple-500" />
-                  <span>{scholarship.period}</span>
+                  <span>{//@ts-ignore
+                    scholarship.period}</span>
                 </div>
                 <div className="flex items-center">
                   <CalendarIcon className="mr-2 h-5 w-5 text-red-500" />
-                  <span>{format(scholarship.regstdate, 'PPP')} - {format(scholarship.regenddate, 'PPP')}</span>
+                 
+                  <span>{format(//@ts-ignore
+                    scholarship.regstdate, 'PPP')} - {format(scholarship.regenddate, 'PPP')}</span>
                 </div>
               </div>
             </CardContent>
@@ -130,13 +141,16 @@ export  function ScholarshipDetails() {
 
         <div className="mb-8">
           <h2 className="text-2xl font-semibold text-purple-700 mb-3">Description</h2>
-          <p className="text-gray-700">{scholarship.description}</p>
+          <p className="text-gray-700">{//@ts-ignore
+            scholarship.description}</p>
         </div>
 
         <div className="mb-8">
           <h2 className="text-2xl font-semibold text-purple-700 mb-3">Application Procedure</h2>
           <ol className="list-decimal list-inside space-y-2 text-gray-700">
-            {scholarship.procedures.map((procedure, index) => (
+            {
+              //@ts-ignore
+              scholarship.procedures.map((procedure, index) => (
               <li key={index}>{procedure}</li>
             ))}
           </ol>
@@ -157,13 +171,17 @@ export  function ScholarshipDetails() {
             <TableBody>
               {//@ts-ignore
               applicants.map((student) => (
-                <TableRow key={student.studentid}>
-                  <TableCell className="font-medium">{student.student.name}</TableCell>
+                <TableRow key={//@ts-ignore
+                  student.studentid}>
+                  <TableCell className="font-medium">{//@ts-ignore
+                    student.student.name}</TableCell>
                   <TableCell>
-                    <Badge variant="secondary">{student.student.studentDetails.currentQualification}</Badge>
+                    <Badge variant="secondary">{//@ts-ignore
+                      student.student.studentDetails.currentQualification}</Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button variant="outline" size="sm" onClick={() => console.log(`View details of student ${student.id}`)}>
+                    <Button variant="outline" size="sm" onClick={() => console.log(`View details of student ${//@ts-ignore
+                      student.id}`)}>
                       View Details
                     </Button>
                   </TableCell>

@@ -8,7 +8,7 @@ import { CalendarIcon, SearchIcon } from 'lucide-react'
 import { format } from 'date-fns'
 import axios from 'axios'
 import { BACKEND_URL } from '../../config'
-
+import { AdminNavbar } from '@/components/admin-navbar'
 
 import { useNavigate } from 'react-router-dom'
 
