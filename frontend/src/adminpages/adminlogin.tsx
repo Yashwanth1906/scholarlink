@@ -24,7 +24,7 @@ export function AdminLogin() {
   
       })
       localStorage.setItem("admintoken",res.data.token)
-    //   navigate("/student/ongoing")
+        navigate("/admin/showongoing")
 
     }
     catch{
@@ -94,6 +94,8 @@ export function AdminLogin() {
         </div>
 
         <div className="mt-6 text-center">
+
+      <div> Don't have account?<Link to="/admin/register" className=" px-3 text-blue-600 hover:underline">Register</Link></div>
           <Link to="/student/changepassword/login" className="text-sm text-blue-600 hover:underline">Forgot password or Change Password?</Link>
         </div>
       </motion.div>

@@ -15,7 +15,7 @@ import { AdminScholarshipCreation } from './adminpages/CreateScholarship'
 import { AdminOngoingScholarships } from './adminpages/ShowOngoingScholarships'
 import { AdminCompletedScholarships } from './adminpages/ShowCompletedScholarships'
 import { ScholarshipDetails } from './adminpages/ScholarshipDetails'
-
+import { LandingPage } from './pages/landing-page'
 function App() {
   
 
@@ -23,6 +23,7 @@ function App() {
     <>
      <BrowserRouter>
         <Routes>
+        <Route path="/" element={< LandingPage />}></Route>
           <Route path="/student/register" element={< StudentRegister />}></Route>
           <Route path="/student/login" element={< StudLogin />}></Route>
           <Route path="/student/scholarshiphome" element={< ScholarshipHome />}></Route>

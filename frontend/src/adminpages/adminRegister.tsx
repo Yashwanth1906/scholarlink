@@ -6,12 +6,13 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { GraduationCapIcon } from 'lucide-react'
 import axios from 'axios'
 import { BACKEND_URL } from '../../config'
+import { useNavigate } from 'react-router-dom'
 
 export  function AdminRegister() {
   const [orgname,setOrgname]=useState("");
   const [email,setEmail]=useState("")
   const [password,setPassword]=useState("")
-
+  const navigate =useNavigate()
 
   const handleSubmit = async() => {
     try{
@@ -21,7 +22,8 @@ export  function AdminRegister() {
             password
         })
         console.log(res)
-        localStorage.setItem("admintoken",res.data.token)
+      localStorage.setItem("admintoken", res.data.token)
+      navigate("/admin/login")
     }
     catch{
         alert("error")
