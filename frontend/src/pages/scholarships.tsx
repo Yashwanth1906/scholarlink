@@ -72,53 +72,10 @@ export function Scholarships() {
 
   return (
     <div className="min-h-screen w-screen absolute top-0 left-0 right-0 bg-gradient-to-b from-purple-100 to-blue-200">
-<<<<<<< HEAD
-      <header className="bg-white shadow-md">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Link to="/scholarships-home" className="flex items-center space-x-2">
-            <GraduationCap className="h-8 w-8 text-purple-600" />
-            <span className="text-2xl font-bold text-purple-600">ScholarLink</span>
-          </Link>
-          <nav className="hidden md:flex items-center space-x-4">
-            <NavLink href="/">Home</NavLink>
-            <NavLink href="/student/scholarshipview">Scholarships</NavLink>
-            <Button className="bg-purple-600 hover:bg-purple-700 text-white" onClick={()=>navigate("/")}>
-              <LogIn className="h-4 w-4 mr-2" />
-              Sign Out
-            </Button>
-          </nav>
-          <div className="md:hidden flex items-center">
-            {/* <Button
-              variant="ghost"
-              className="mr-2"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              <Menu className="h-6 w-6" />
-            </Button> */}
-            <Button className="bg-purple-600 hover:bg-purple-700 text-white p-2">
-              <LogIn className="h-4 w-4" />
-              <span className="sr-only">Sign In</span>
-            </Button>
-          </div>
-        </div>
-        {/* {isMenuOpen && (
-          <motion.nav
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="md:hidden bg-white px-4 py-2 shadow-md"
-          >
-            <NavLink href="/" mobile>Home</NavLink>
-            <NavLink href="/scholarships" mobile>Scholarships</NavLink>
-          </motion.nav>
-        )} */}
-      </header>
-=======
       <StudentNavbar />
       <br></br>
       <br></br>
       <br></br>
->>>>>>> 8a8173ce38d37e9ea1e294204b4e7368e66e26cf
 
       <main className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold text-center text-purple-800 mb-8">Available Scholarships</h1>

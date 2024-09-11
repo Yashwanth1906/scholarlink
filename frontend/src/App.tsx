@@ -35,7 +35,7 @@ function App() {
           <Route path="/student/scholarshipview" element={<ScholarshipViewer/>}></Route>
           {/* <Route path="/student/myprofile" element={<MyProfile/>}></Route> */}
 
-          <Route path="/student/myprofile" element={<MyProfile />}></Route>
+          {/* <Route path="/student/myprofile" element={<MyProfile />}></Route> */}
           <Route path="/student/GovernmentScholarships" element={<GovernmentScholarships/>}></Route>
           
 

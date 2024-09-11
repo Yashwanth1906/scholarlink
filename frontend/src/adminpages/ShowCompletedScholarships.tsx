@@ -11,7 +11,7 @@ import { BACKEND_URL } from '../../config'
 import { AdminNavbar } from '@/components/admin-navbar'
 
 import { useNavigate } from 'react-router-dom'
-import { AdminNavbar } from '@/components/admin-navbar'
+// import { AdminNavbar } from '@/components/admin-navbar'
 
 
 type Scholarship = {
