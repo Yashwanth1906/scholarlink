@@ -12,6 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { PlusCircle, MinusCircle, CalendarIcon } from 'lucide-react'
 import { format } from "date-fns"
 import axios from 'axios'
+import { AdminNavbar } from '@/components/admin-navbar'
 import { BACKEND_URL } from '../../config'
 
 
@@ -85,8 +86,10 @@ export  function AdminScholarshipCreation() {
 
   }
 
-  return (
+  return (<>
+    
     <div className="min-h-screen w-screen absolute left-0 top-0 bg-gradient-to-b from-purple-100 to-blue-200 p-4 md:p-8">
+    <AdminNavbar/>
       <Card className="w-full max-w-4xl mx-auto">
         <CardHeader>
           <CardTitle className="text-2xl md:text-3xl font-bold text-purple-800">Create New Scholarship</CardTitle>
@@ -240,7 +243,7 @@ export  function AdminScholarshipCreation() {
             </div>
 
             <div className="space-y-2">
-              <Label>Procedures</Label>
+              <Label>Application Procedures</Label>
               {scholarshipData.procedures.map((procedure, index) => (
                 <div key={index} className="flex items-center space-x-2">
                   <Input 
@@ -264,6 +267,6 @@ export  function AdminScholarshipCreation() {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </div></>
   )
 }
