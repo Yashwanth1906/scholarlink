@@ -8,7 +8,10 @@ import { CalendarIcon, SearchIcon } from 'lucide-react'
 import { format } from 'date-fns'
 import axios from 'axios'
 import { BACKEND_URL } from '../../config'
-import { AdminNavbar } from '@/components/admin-navbar'
+
+
+import { useNavigate } from 'react-router-dom'
+
 
 type Scholarship = {
 
@@ -32,6 +35,7 @@ export  function AdminCompletedScholarships() {
   const [scholarships, setScholarships] = useState<Scholarship[]>([])
 //   const [searchTerm, setSearchTerm] = useState('')
     const [loading,setLoading]=useState<boolean>(true); 
+    const navigate=useNavigate();
 
   useEffect(() => {
     axios.get(`${BACKEND_URL}/api/admin/completed`,{
@@ -57,8 +61,8 @@ export  function AdminCompletedScholarships() {
 //     scholarship.name.toLowerCase().includes(searchTerm.toLowerCase())
 //   )
 
-  const handleViewDetails = () => {
-
+  const handleViewDetails = (id:number) => {
+    navigate(`/admin/scholarshipdetails?id=${id}`);
 
   }
 
@@ -102,7 +106,7 @@ export  function AdminCompletedScholarships() {
               </CardContent>
               <CardFooter>
                 <Button 
-                  onClick={() => handleViewDetails()}
+                  onClick={() => handleViewDetails(scholarship.id)}
                   className="w-full bg-purple-600 hover:bg-purple-700 text-white"
                 >
                   View Details

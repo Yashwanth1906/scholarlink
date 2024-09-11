@@ -7,86 +7,73 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { CalendarIcon, DollarSign, Users, ThumbsUp, Clock } from 'lucide-react'
+import { CalendarIcon, DollarSign, Users, ThumbsUp, Clock, BookTemplate } from 'lucide-react'
 import { format } from 'date-fns'
+
 import { useNavigate } from 'react-router-dom'
 import { AdminNavbar } from '@/components/admin-navbar'
 
+import {  useSearchParams } from 'react-router-dom'
+import axios from 'axios'
+import { BACKEND_URL } from '../../config'
+
+
 type Scholarship = {
-  id: string
-  name: string
-  eligibilityCriteria: {
-    gender: string
-    annualIncome: string
-    studentType: string
-    community: string
-  }
-  likes: number
-  amount: number
-  duration: string
-  regStartDate: Date
-  regEndDate: Date
-  description: string
-  procedures: string[]
+        "id": number,
+        "name": string,
+        "providedby": string,
+        "image": string | null,
+        "scholarshipfor": string[],
+        "likes": number,
+        "amt": number,
+        "period": number,
+        "regstdate": string,
+        "regenddate": string,
+        "description": string,
+        "procedures":string[],
+        "completed": boolean,
+        "appliedScholarship": any,
+        "admin": {
+            "id": number,
+            "email": string,
+            "password": string,
+            "orgname": string
+        }
 }
 
-type Student = {
-  id: string
-  name: string
-  studentType: string
-}
+
 
 export  function ScholarshipDetails() {
   const router = useNavigate()
 
   const [scholarship, setScholarship] = useState<Scholarship | null>(null)
-  const [applicants, setApplicants] = useState<Student[]>([])
+  const [applicants, setApplicants] = useState([])
+  const [search,]=useSearchParams();
+  const [loading,setLoading]=useState<boolean>(true)
+
 
   useEffect(() => {
-    // Simulating API call to fetch scholarship details
+   
     const fetchScholarshipDetails = async () => {
-      // In a real application, you would fetch this data from your API using the id
-      const mockScholarship: Scholarship = {
-        id: '1',
-        name: 'STEM Excellence Scholarship',
-        eligibilityCriteria: {
-          gender: 'Any',
-          annualIncome: 'Below 5 Lakhs',
-          studentType: 'UG',
-          community: 'Any',
-        },
-        likes: 250,
-        amount: 50000,
-        duration: '1 year',
-        regStartDate: new Date('2023-06-01'),
-        regEndDate: new Date('2023-08-31'),
-        description: 'This scholarship aims to support outstanding students pursuing STEM fields at the undergraduate level.',
-        procedures: [
-          'Submit online application',
-          'Provide academic transcripts',
-          'Write a personal statement',
-          'Obtain two letters of recommendation',
-        ],
-      }
-      setScholarship(mockScholarship)
-
-      // Simulating API call to fetch applicants
-      const mockApplicants: Student[] = [
-        { id: '1', name: 'John Doe', studentType: 'Engineering' },
-        { id: '2', name: 'Jane Smith', studentType: 'Medical' },
-        { id: '3', name: 'Alice Johnson', studentType: 'Engineering' },
-        { id: '4', name: 'Bob Williams', studentType: 'Higher Secondary' },
-        { id: '5', name: 'Charlie Brown', studentType: 'PG' },
-      ]
-      setApplicants(mockApplicants)
+     
+      const res=await axios.get(`${BACKEND_URL}/api/admin/details?id=${search.get("id")}`);
+      setScholarship(res.data.details)
+      let temp:any=[]
+      res.data.details.appliedScholarship.map((x:any)=>{
+        temp.push(x)
+      })
+ 
+      setApplicants(temp)
+      setLoading(false)
     }
 
 
       fetchScholarshipDetails()
+     
 
   }, [])
 
-  if (!scholarship) {
+  if (loading) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>
   }
 
@@ -106,10 +93,10 @@ export  function ScholarshipDetails() {
             </CardHeader>
             <CardContent>
               <ul className="space-y-2">
-                <li><span className="font-medium">Gender:</span> {scholarship.eligibilityCriteria.gender}</li>
-                <li><span className="font-medium">Annual Income:</span> {scholarship.eligibilityCriteria.annualIncome}</li>
-                <li><span className="font-medium">Student Type:</span> {scholarship.eligibilityCriteria.studentType}</li>
-                <li><span className="font-medium">Community:</span> {scholarship.eligibilityCriteria.community}</li>
+                <li><span className="font-medium">Gender:</span> {scholarship.scholarshipfor[0]}</li>
+                <li><span className="font-medium">Annual Income:</span> {scholarship.scholarshipfor[1]}</li>
+                <li><span className="font-medium">Student Type:</span> {scholarship.scholarshipfor[2]}</li>
+                <li><span className="font-medium">Community:</span> {scholarship.scholarshipfor[3]}</li>
               </ul>
             </CardContent>
           </Card>
@@ -126,15 +113,15 @@ export  function ScholarshipDetails() {
                 </div>
                 <div className="flex items-center">
                   <DollarSign className="mr-2 h-5 w-5 text-green-500" />
-                  <span>₹{scholarship.amount.toLocaleString()}</span>
+                  <span>₹{scholarship.amt}</span>
                 </div>
                 <div className="flex items-center">
                   <Clock className="mr-2 h-5 w-5 text-purple-500" />
-                  <span>{scholarship.duration}</span>
+                  <span>{scholarship.period}</span>
                 </div>
                 <div className="flex items-center">
                   <CalendarIcon className="mr-2 h-5 w-5 text-red-500" />
-                  <span>{format(scholarship.regStartDate, 'PPP')} - {format(scholarship.regEndDate, 'PPP')}</span>
+                  <span>{format(scholarship.regstdate, 'PPP')} - {format(scholarship.regenddate, 'PPP')}</span>
                 </div>
               </div>
             </CardContent>
@@ -168,11 +155,12 @@ export  function ScholarshipDetails() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {applicants.map((student) => (
-                <TableRow key={student.id}>
-                  <TableCell className="font-medium">{student.name}</TableCell>
+              {//@ts-ignore
+              applicants.map((student) => (
+                <TableRow key={student.studentid}>
+                  <TableCell className="font-medium">{student.student.name}</TableCell>
                   <TableCell>
-                    <Badge variant="secondary">{student.studentType}</Badge>
+                    <Badge variant="secondary">{student.student.studentDetails.currentQualification}</Badge>
                   </TableCell>
                   <TableCell className="text-right">
                     <Button variant="outline" size="sm" onClick={() => console.log(`View details of student ${student.id}`)}>

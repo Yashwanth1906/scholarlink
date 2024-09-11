@@ -169,7 +169,7 @@ const uploadToS3 = async (file: Express.Multer.File, folder: string) => {
         // Create student details
         await tx.studentDetails.create({
           data: {
-            studemail: req.headers.email as string,
+            studemail: "test2@gmail.com",
             currentQualifications: studenttype || 'Unknown',
             gender,
             annualIncome: parseInt(annualIncome, 10) || 0,
@@ -196,7 +196,7 @@ const uploadToS3 = async (file: Express.Multer.File, folder: string) => {
         if (studenttype === 'Secondary') {
           await tx.secondaryStudentDetails.create({
             data: {
-              emailId: req.headers.email as string,
+              emailId: "test2@gmail.com" as string,
               schoolname: schoolname || '',
               schoollocation: schoolLocation || '',
               score: parseFloat(score) || 0,
@@ -207,7 +207,7 @@ const uploadToS3 = async (file: Express.Multer.File, folder: string) => {
         } else if (studenttype === 'HSC') {
           await tx.hSCStudentDetails.create({
             data: {
-              emailId: req.headers.email as string,
+              emailId: "test2@gmail.com" as string,
               sscschoolname: sscSchoolName || '',
               sscschoollocation: sscSchoolLocation || '',
               schoolname: hscSchoolName || '',
@@ -219,7 +219,7 @@ const uploadToS3 = async (file: Express.Multer.File, folder: string) => {
         } else if (studenttype === 'undergraduate') {
           await tx.uGCollegeStudentDetails.create({
             data: {
-              emailId: req.headers.email as string,
+              emailId: "test2@gmail.com" as string,
               degree: degree || '',
               discipline: discipline || '',
               sscschoolname: sscSchoolName || '',
@@ -240,7 +240,7 @@ const uploadToS3 = async (file: Express.Multer.File, folder: string) => {
         } else if (studenttype === 'Postgraduate') {
           await tx.pGCollegeStudentDetails.create({
             data: {
-              emailId: req.headers.email as string,
+              emailId: "test2@gmail.com" as string,
               degree: degree || '',
               discipline: discipline || '',
               sscschoolname: sscSchoolName || '',

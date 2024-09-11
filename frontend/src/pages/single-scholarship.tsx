@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
 import { GraduationCap, DollarSign, Users, ThumbsUp, Calendar, Clock, AlertCircle } from 'lucide-react'
 import axios from 'axios'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BACKEND_URL } from '../../config'
 
 type scholarship={
@@ -38,6 +38,8 @@ export  function SingleScholarship() {
   const [loading,setLoading]=useState<boolean>(true)
   //@ts-ignore
   const [scholarship, setScholarship] = useState<scholarship>({})
+  const navigate=useNavigate();
+
 
   useEffect(()=>{
     axios.get(`${BACKEND_URL}/api/student/scholarship?id=${search.get("id")}`,{
@@ -86,6 +88,7 @@ export  function SingleScholarship() {
         }
       })
       console.log(res);
+      setIsDialogOpen(false)
     }
     catch(err){
       alert("error")
