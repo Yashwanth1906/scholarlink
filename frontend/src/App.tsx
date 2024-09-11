@@ -16,6 +16,7 @@ import { AdminOngoingScholarships } from './adminpages/ShowOngoingScholarships'
 import { AdminCompletedScholarships } from './adminpages/ShowCompletedScholarships'
 import { ScholarshipDetails } from './adminpages/ScholarshipDetails'
 import { LandingPage } from './pages/landing-page'
+import{GovernmentScholarships} from "./pages/government-scholarships"
 function App() {
   
 
@@ -32,8 +33,9 @@ function App() {
           <Route path="/student/createblog" element={<CreateBlogPost />}></Route>
           <Route path="/student/scholarship" element={<SingleScholarship />}></Route>
           <Route path="/student/scholarshipview" element={<ScholarshipViewer/>}></Route>
-          <Route path="/student/myprofile" element={<MyProfile/>}></Route>
-
+          <Route path="/student/myprofile" element={<MyProfile />}></Route>
+          <Route path="/student/GovernmentScholarships" element={<GovernmentScholarships/>}></Route>
+          
 
 
 

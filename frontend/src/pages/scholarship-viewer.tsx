@@ -9,6 +9,7 @@ import { GraduationCap, CheckCircle, Clock, X } from 'lucide-react'
 import {Link, useNavigate} from "react-router-dom"
 import axios from 'axios'
 import { BACKEND_URL } from '../../config'
+import { StudentNavbar } from '@/components/student-navbar'
 
 
 
@@ -46,19 +47,11 @@ export function ScholarshipViewer() {
 
   return (
     <div className="min-h-screen w-screen  absolute top-0 left-0 right-0 bg-gradient-to-b from-purple-100 to-blue-200">
-      <header className="bg-white shadow-md">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Link to="/" className="flex items-center space-x-2">
-            <GraduationCap className="h-8 w-8 text-purple-600" />
-            <span className="text-2xl font-bold text-purple-600">ScholarLink</span>
-          </Link>
-          <nav className="hidden md:flex items-center space-x-4">
-            <NavLink href="/">Home</NavLink>
-            <NavLink href="/scholarships">Scholarships</NavLink>
-            <NavLink href="/my-profile">My Profile</NavLink>
-          </nav>
-        </div>
-      </header>
+      <StudentNavbar />
+      <br></br>
+      <br></br>
+      <br></br>
+      
 
       <main className="container mx-auto px-4 py-8">
         <motion.h1
@@ -80,6 +73,7 @@ export function ScholarshipViewer() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
               {appliedScholarships.map((scholarship) => (
                 <ScholarshipCard 
+                  //@ts-ignore
                   key={scholarship.id}
                   scholarship={scholarship}
                   type="applied"
@@ -102,6 +96,7 @@ export function ScholarshipViewer() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
               {completedScholarships.map((scholarship) => (
                 <ScholarshipCard 
+                  //@ts-ignore
                   key={scholarship.id}
                   scholarship={scholarship}
                   type="completed"
