@@ -44,7 +44,7 @@ type Scholarship = {
 
 
 export  function ScholarshipDetails() {
-  const router = useNavigate()
+  const navigate = useNavigate()
 
   const [scholarship, setScholarship] = useState<Scholarship | null>(null)
   const [applicants, setApplicants] = useState([])
@@ -56,13 +56,17 @@ export  function ScholarshipDetails() {
    
     const fetchScholarshipDetails = async () => {
      
-      const res=await axios.get(`${BACKEND_URL}/api/admin/details?id=${search.get("id")}`);
+      const res=await axios.get(`${BACKEND_URL}/api/admin/details?id=${search.get("id")}`,{
+        headers:{
+          Authorization:localStorage.getItem("admintoken")
+        }
+      });
       setScholarship(res.data.details)
       let temp:any=[]
       res.data.details.appliedScholarship.map((x:any)=>{
         temp.push(x)
       })
- 
+      console.log(temp)
       setApplicants(temp)
       setLoading(false)
     }
@@ -160,10 +164,10 @@ export  function ScholarshipDetails() {
                 <TableRow key={student.studentid}>
                   <TableCell className="font-medium">{student.student.name}</TableCell>
                   <TableCell>
-                    <Badge variant="secondary">{student.student.studentDetails.currentQualification}</Badge>
+                    <Badge variant="secondary">{student.student.studentdetails[0].currentQualifications}</Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button variant="outline" size="sm" onClick={() => console.log(`View details of student ${student.id}`)}>
+                    <Button variant="outline" size="sm" onClick={()=>{navigate(`/admin/studentdetails?id=${student.studentid}`)}}>
                       View Details
                     </Button>
                   </TableCell>
@@ -176,3 +180,4 @@ export  function ScholarshipDetails() {
     </div>
   )
 }
+        

@@ -46,7 +46,7 @@ model StudentDetails{
   bonafide String?
   incomecertificate String?
   salaryslip String?
-  achievements String[]
+  achievements String[] @default([])
   community String
 }
 

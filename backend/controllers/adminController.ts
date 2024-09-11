@@ -77,7 +77,7 @@ export const createScholarship = async(req:any,res:any)=>{
     const scholarship=await prisma.scholarship.create({
         data:{
             name,
-            providedby:"tata@gmail.com",
+            providedby:req.headers.email,
             scholarshipfor,
             likes:0,
             amt:parseInt(prizeAmount),
@@ -135,7 +135,7 @@ export const showOngoingScholarships=async(req:any,res:any)=>{
     try{
         const scholarships=await prisma.scholarship.findMany({
             where:{
-                providedby:"tata@gmail.com",
+                providedby:req.headers.email,
                 regstdate:{lte:new Date().toISOString().substring(0,10)},
                 regenddate:{gte:new Date().toISOString().substring(0,10)}
             },
@@ -156,7 +156,7 @@ export const showCompletedScholarships=async(req:any,res:any)=>{
     try{
         const scholarships=await prisma.scholarship.findMany({
             where:{
-                providedby:"tata@gmail.com",
+                providedby:req.headers.email,
 
                 regenddate:{lt:new Date().toISOString().substring(0,10)}
             },
@@ -204,6 +204,34 @@ export const viewDetails=async(req:any,res:any)=>{
         return res.status(500).json({msg:"error"})
     }
 
+
+
+}
+
+export const getProfile=async(req:any,res:any)=>{
+    try{
+        const email=req.query.email;
+        const student=await prisma.student.findUnique({
+            where:{
+                email
+            },
+            include:{
+                studentdetails:true,
+                secondarystudentDetails:true,
+                hscstudentdetails:true,
+                ugcollegestudentdetails:true,
+                pgcollegestudentdetails:true,
+            }
+        })
+
+        return res.status(200).json({student})
+
+
+    }
+    catch(err){
+        console.log(err)
+        return res.status(500).json({msg:"eroor"})
+    }
 
 
 }

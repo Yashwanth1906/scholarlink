@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { ScholarshipHome } from './pages/scholarship-home'
 import { Scholarships } from './pages/scholarships'
-import { MyProfile } from './pages/my-profile'
+import {  StudentProfile } from './adminpages/student-profile'
 import { StudentInformation } from './pages/student-information'
 import { SingleScholarship } from './pages/single-scholarship'
 import './App.css'
@@ -32,7 +32,7 @@ function App() {
           <Route path="/student/createblog" element={<CreateBlogPost />}></Route>
           <Route path="/student/scholarship" element={<SingleScholarship />}></Route>
           <Route path="/student/scholarshipview" element={<ScholarshipViewer/>}></Route>
-          <Route path="/student/myprofile" element={<MyProfile/>}></Route>
+          {/* <Route path="/student/myprofile" element={<MyProfile/>}></Route> */}
 
 
 
@@ -43,6 +43,7 @@ function App() {
           <Route path="/admin/showongoing" element={<AdminOngoingScholarships/>}></Route>
           <Route path="/admin/showcompleted" element={<AdminCompletedScholarships/>}></Route>
           <Route path="/admin/scholarshipdetails" element={<ScholarshipDetails/>}></Route>
+          <Route path="/admin/studentdetails" element={<StudentProfile/>}></Route>
 
 
 

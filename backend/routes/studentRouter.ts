@@ -1,6 +1,6 @@
 import {Router} from "express"
 import { addDetails, applyScholarship, getProfile, getScholarship, getScholarships, scholarshipView, studentLogin, studentRegister } from "../controllers/studentController";
-import { authMiddleware } from "../middleware/auth";
+import { authMiddleWare } from "../middleware/auth";
 import multer from "multer";
 
 const upload = multer({ storage: multer.memoryStorage() });
@@ -25,9 +25,9 @@ export const studentRouter=Router();
 
 studentRouter.post("/register",studentRegister)
 studentRouter.post("/login",studentLogin)
-studentRouter.post("/addinformation",authMiddleware,uploadFields,addDetails)
-studentRouter.get("/scholarships",authMiddleware,getScholarships)
-studentRouter.get("/scholarship",authMiddleware,getScholarship)
-studentRouter.post("/applyscholarship",applyScholarship)
-studentRouter.get("/getprofile",getProfile)
-studentRouter.get("/scholarshipview",scholarshipView)
+studentRouter.post("/addinformation",authMiddleWare,uploadFields,addDetails)
+studentRouter.get("/scholarships",authMiddleWare,getScholarships)
+studentRouter.get("/scholarship",authMiddleWare,getScholarship)
+studentRouter.post("/applyscholarship",authMiddleWare,applyScholarship)
+studentRouter.get("/getprofile",authMiddleWare,getProfile)
+studentRouter.get("/scholarshipview",authMiddleWare,scholarshipView)

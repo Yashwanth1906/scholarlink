@@ -52,7 +52,7 @@ export function AdminNavbar() {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link to="/signout" className="flex items-center text-red-600">
+                  <Link to="/" className="flex items-center text-red-600">
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Sign Out</span>
                   </Link>

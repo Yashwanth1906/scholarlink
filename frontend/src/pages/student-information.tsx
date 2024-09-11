@@ -356,7 +356,7 @@ export function StudentInformation() {
       })
 
       console.log(res)
-      navigate("/student/ongoing")
+      navigate("/student/scholarships")
     } catch (error) {
       console.error("Error submitting profile data:", error)
     }

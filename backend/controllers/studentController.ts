@@ -65,7 +65,6 @@ export const studentLogin=async(req:any,res:any)=>{
     }
     
 }
-
 const bucket_name = process.env.BUCKET_NAME;
 const bucket_region = process.env.BUCKET_REGION;
 const access_key = process.env.ACCESS_KEY;
@@ -100,7 +99,8 @@ const uploadToS3 = async (file: Express.Multer.File, folder: string) => {
       console.log("S3 upload error:", err);
       throw new Error("Error uploading file to S3");
     }
-  };
+}
+
   export const addDetails = async (req: any, res: any): Promise<Response> => {
     try {
       const {
@@ -169,12 +169,12 @@ const uploadToS3 = async (file: Express.Multer.File, folder: string) => {
         // Create student details
         await tx.studentDetails.create({
           data: {
-            studemail: "test2@gmail.com",
+            studemail: req.headers.email as string,
             currentQualifications: studenttype || 'Unknown',
             gender,
             annualIncome: parseInt(annualIncome, 10) || 0,
             dob,
-            achievements: achievements || '',
+            achievements: achievements || [],
             fatherName: fatherName || null,
             motherName: motherName || null,
             fatherOccupation: fatherOccupation || null,
@@ -190,24 +190,27 @@ const uploadToS3 = async (file: Express.Multer.File, folder: string) => {
             incomecertificate: incomeCertificateUrl || null,
             salaryslip: salarySlipUrl || null,
             community: community || 'Unknown',
+            // student: {
+            //   connect: { email: req.headers.email as string }
+            // }
           },
         });
-        console.log("hi")
-        if (studenttype === 'Secondary') {
+        console.log("hi") 
+        if (studenttype === 'secondary') {
           await tx.secondaryStudentDetails.create({
             data: {
-              emailId: "test2@gmail.com" as string,
+              emailId: req.headers.email as string,
               schoolname: schoolname || '',
               schoollocation: schoolLocation || '',
               score: parseFloat(score) || 0,
-              grade: grade || '',
+              grade:9,
               annualcard: annualCardUrl || null,
             },
           });
-        } else if (studenttype === 'HSC') {
+        } else if (studenttype === 'higher_secondary') {
           await tx.hSCStudentDetails.create({
             data: {
-              emailId: "test2@gmail.com" as string,
+              emailId: req.headers.email as string,
               sscschoolname: sscSchoolName || '',
               sscschoollocation: sscSchoolLocation || '',
               schoolname: hscSchoolName || '',
@@ -219,7 +222,7 @@ const uploadToS3 = async (file: Express.Multer.File, folder: string) => {
         } else if (studenttype === 'undergraduate') {
           await tx.uGCollegeStudentDetails.create({
             data: {
-              emailId: "test2@gmail.com" as string,
+              emailId: req.headers.email as string,
               degree: degree || '',
               discipline: discipline || '',
               sscschoolname: sscSchoolName || '',
@@ -237,10 +240,10 @@ const uploadToS3 = async (file: Express.Multer.File, folder: string) => {
               endyear: parseInt(endYear, 10) || 0,
             },
           });
-        } else if (studenttype === 'Postgraduate') {
+        } else if (studenttype === 'postgraduate') {
           await tx.pGCollegeStudentDetails.create({
             data: {
-              emailId: "test2@gmail.com" as string,
+              emailId: req.headers.email as string,
               degree: degree || '',
               discipline: discipline || '',
               sscschoolname: sscSchoolName || '',
@@ -268,7 +271,6 @@ const uploadToS3 = async (file: Express.Multer.File, folder: string) => {
       return res.status(500).json({ msg: 'Internal server error' });
     }
   };
-  
 
 export const getScholarships=async(req:any,res:any)=>{
     try{
@@ -277,7 +279,7 @@ export const getScholarships=async(req:any,res:any)=>{
               NOT: {
                 appliedScholarship: {
                   some: {
-                    studentid: req.headers.id
+                    studentid:req.headers.email
                   }
                 }
               }
@@ -321,10 +323,10 @@ export const getScholarship=async(req:any,res:any)=>
 export const applyScholarship=async(req:any,res:any)=>{
     try{
         const id=parseInt(req.query.id);
-        console.log(req.headers.id)
+        // console.log(req.headers.id)
         await prisma.scholarshipApplied.create({
             data:{
-                studentid:"test1@gmail.com",
+                studentid:req.headers.email,
                 scholarshipid:id,
                 status:"pending",
                 scholarshipEssay:req.body.bestFit
@@ -344,7 +346,7 @@ export const getProfile=async(req:any,res:any)=>{
         // const id=req.headers.id;
         const profile=await prisma.student.findUnique({
             where:{
-                email:"test2@gmail.com"
+                email:req.headers.email
             },
             include:{
                 studentdetails:true,
@@ -367,7 +369,7 @@ export const scholarshipView=async(req:any,res:any)=>{
         console.log(req.headers.id +"  ***")
         const applied=await prisma.scholarshipApplied.findMany({
             where:{
-                studentid:"test1@gmail.com",
+                studentid:req.headers.email,
                 status:"pending"
             },
             include:{
@@ -377,7 +379,7 @@ export const scholarshipView=async(req:any,res:any)=>{
         })
         const completed=await prisma.scholarshipApplied.findMany({
             where:{
-                studentid:req.headers.id,
+                studentid:req.headers.email,
                 status:"completed"
             }
         })

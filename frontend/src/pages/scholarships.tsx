@@ -79,10 +79,10 @@ export function Scholarships() {
           </Link>
           <nav className="hidden md:flex items-center space-x-4">
             <NavLink href="/">Home</NavLink>
-            <NavLink href="/scholarships">Scholarships</NavLink>
-            <Button className="bg-purple-600 hover:bg-purple-700 text-white">
+            <NavLink href="/student/scholarshipview">Scholarships</NavLink>
+            <Button className="bg-purple-600 hover:bg-purple-700 text-white" onClick={()=>navigate("/")}>
               <LogIn className="h-4 w-4 mr-2" />
-              Sign In
+              Sign Out
             </Button>
           </nav>
           <div className="md:hidden flex items-center">
