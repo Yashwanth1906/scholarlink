@@ -341,10 +341,10 @@ export const applyScholarship=async(req:any,res:any)=>{
 
 export const getProfile=async(req:any,res:any)=>{
     try{
-        const id=req.headers.id;
+        // const id=req.headers.id;
         const profile=await prisma.student.findUnique({
             where:{
-                email:id
+                email:"test2@gmail.com"
             },
             include:{
                 studentdetails:true,

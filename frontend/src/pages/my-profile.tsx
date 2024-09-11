@@ -5,9 +5,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { GraduationCap, User, Mail, Calendar, Award, School, FileText, Download, DollarSign, MapPin } from 'lucide-react'
 import { Link } from "react-router-dom"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import axios from "axios"
-import { BACKEND_URL } from "config"
+import { BACKEND_URL } from "../../config"
 
 // Mock student data
 const studentData = {
@@ -65,9 +65,16 @@ const studentData = {
 }
 
 export function MyProfile() {
+  const [studentdata,setStudentdata]=useState();
+
+
+
   useEffect(()=>{
-    axios.get(`${BACKEND_URL}/api/student/getprofile`)
-  })
+    axios.get(`${BACKEND_URL}/api/student/getprofile`).then((data)=>{
+      setStudentdata(data.data.profile)
+      console.log(data.data.profile)
+    })
+  },[])
 
 
   const renderEducationDetails = () => {
