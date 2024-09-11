@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { CalendarIcon, DollarSign, Users, ThumbsUp, Clock } from 'lucide-react'
 import { format } from 'date-fns'
 import { useNavigate } from 'react-router-dom'
+import { AdminNavbar } from '@/components/admin-navbar'
 
 type Scholarship = {
   id: string
@@ -91,8 +92,12 @@ export  function ScholarshipDetails() {
 
   return (
     <div className="min-h-screen w-screen absolute top-0 left-0 bg-gradient-to-b from-purple-100 to-blue-200 p-6 md:p-10">
-      <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-xl p-6 md:p-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-purple-800 mb-6">{scholarship.name}</h1>
+      <AdminNavbar />
+      <br></br>
+      <br></br>
+      <br></br>
+      <div className="max-w-4xl mx-auto bg-white rounded-lg  shadow-xl py-80 md:p-8">
+        <h1 className="text-3xl md:text-4xl font-bold  text-purple-800 mb-6">{scholarship.name}</h1>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <Card>

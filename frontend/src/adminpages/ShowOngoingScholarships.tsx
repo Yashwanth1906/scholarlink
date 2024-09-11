@@ -4,10 +4,13 @@ import { useState, useEffect } from 'react'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { CalendarIcon, SearchIcon } from 'lucide-react'
+import { CalendarIcon, SearchIcon ,PlusIcon} from 'lucide-react'
 import { format } from 'date-fns'
 import axios from 'axios'
+import { Link } from 'react-router-dom'
+
 import { BACKEND_URL } from '../../config'
+import { AdminNavbar } from '@/components/admin-navbar'
 
 type Scholarship = {
 
@@ -63,9 +66,18 @@ export  function AdminOngoingScholarships() {
 
   return (
     <div className="min-h-screen w-screen absolute left-0 top-0 bg-gradient-to-b from-purple-100 to-blue-200 p-6 md:p-10">
-      <div className="max-w-6xl mx-auto">
+      <AdminNavbar />
+      
+      <div className="max-w-6xl py-20 mx-auto">
         <h1 className="text-3xl md:text-4xl font-bold text-purple-800 mb-6">Ongoing Scholarships</h1>
-        
+        <Link to="/admin/createscholarship" >
+            <Button className="bg-green-600 hover:bg-green-700 text-white">
+              <PlusIcon className="mr-2 h-4 w-4" />
+              Create Scholarship
+          </Button>
+        </Link>
+        <br></br>
+        <br></br>
         {/* <div className="mb-6 relative">
           <Input
             type="text"

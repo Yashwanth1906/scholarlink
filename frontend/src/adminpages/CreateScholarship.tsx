@@ -89,8 +89,11 @@ export  function AdminScholarshipCreation() {
   return (<>
     
     <div className="min-h-screen w-screen absolute left-0 top-0 bg-gradient-to-b from-purple-100 to-blue-200 p-4 md:p-8">
-    <AdminNavbar/>
-      <Card className="w-full max-w-4xl mx-auto">
+      <AdminNavbar />
+      <br></br>
+      <br></br>
+      <br></br>
+      <Card className="w-full max-w-4xl  mx-auto">
         <CardHeader>
           <CardTitle className="text-2xl md:text-3xl font-bold text-purple-800">Create New Scholarship</CardTitle>
         </CardHeader>
